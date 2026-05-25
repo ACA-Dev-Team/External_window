@@ -1,0 +1,5144 @@
+<template>
+  <div class="">
+    <div class="h-screen bg-gray-100 overflow-hidden flex">
+      <asideComponent :isOpen="menuOpen"></asideComponent>
+      <div class="flex-1 bg-gray-200 w-0 overflow-y-auto">
+        <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
+          <navComponent @menu-toggled="onMenuToggle"></navComponent>
+          <main class="flex-1 relative focus:outline-none pt-2 pb-24">
+            <div class="flex flex-col xl:flex-row justify-between items-center">
+              <div class="">
+                <h1 class="text-xl font-semibold text-gray-900">
+                  البريد الوارد
+                </h1>
+              </div>
+
+              <div class="flex items-center mt-4">
+                <span class="text-base font-medium text-gray-800">
+                  التاريخ :
+                </span>
+
+                <span class="flex items-center mr-4">
+                  من
+                  <input
+                    type="date"
+                    min="2000-01-01"
+                    max="2040-12-30"
+                    id="date_from"
+                    v-model="date_from"
+                    @keypress.enter="GetInboxs()"
+                    class="block mr-2 w-full rounded-md h-10 border border-gray-200 hover:shadow-sm focus:outline-none focus:border-gray-300 px-2"
+                  />
+                </span>
+
+                <span class="flex items-center mr-4">
+                  إلي
+                  <input
+                    type="date"
+                    min="2000-01-01"
+                    max="2040-12-30"
+                    id="date_to"
+                    v-model="date_to"
+                    @keypress.enter="GetInboxs()"
+                    class="block mr-2 w-full rounded-md h-10 border border-gray-200 hover:shadow-sm focus:outline-none focus:border-gray-300 px-2"
+                  />
+                </span>
+              </div>
+
+         <div></div>
+            </div>
+
+            <div class="mt-4 flex">
+              <div
+                class="flex sm:col-span-2 border border-green-400 px-2 rounded-md ml-2"
+              >
+                <label
+                  for="new_reply"
+                  class="block text-base font-semibold text-gray-800"
+                >
+                  الردود الجديدة
+                </label>
+                <input
+                  v-model="new_reply"
+                  type="checkbox"
+                  id="new_reply"
+                  class="block mt-2 ml-2 h-8 w-8 overflow-hidden rounded-md border border-gray-300 hover:shadow-sm focus:outline-none focus:border-gray-300"
+                />
+              </div>
+
+              <div class="relative w-full">
+                <button
+                  @click="filter = !filter"
+                  :class="filter ? 'shadow-md' : ''"
+                  class="rounded-t-md border border-b-0 hover:text-blue-600 hover:font-bold group w-full p-2 bg-white flex items-center justify-between focus:outline-none"
+                >
+                  <span class="flex items-center">
+                    <svg
+                      class="w-6 h-6 ml-2 stroke-current group-hover:stroke-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                      ></path>
+                    </svg>
+                    فرز
+                  </span>
+
+                  <span class="">
+                    <svg
+                      class="w-6 h-6 stroke-current group-hover:stroke-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="{2}"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </span>
+                </button>
+
+                <div
+                  v-if="filter"
+                  class="rounded-b-md shadow-md absolute top-10 w-full border border-t-0 z-40 bg-white px-4 py-8"
+                >
+                  <div
+                    class="flex flex-col md:grid md:gap-y-6 md:gap-x-4 md:grid-cols-6 max-w-4xl mx-auto"
+                  >
+                    <div class="md:col-span-2">
+                      <label
+                        for="mail_id"
+                        class="block text-base font-semibold text-gray-800"
+                      >
+                        رقم البريد
+                      </label>
+                      <input
+                        v-model="mail_id"
+                        type="number"
+                        min="1"
+                        max="1000000"
+                        id="mail_id"
+                        class="block mt-2 h-10 w-full rounded-md border border-gray-300 hover:shadow-sm focus:outline-none focus:border-gray-300 px-2"
+                      />
+                    </div>
+
+                    <div class="md:col-span-2">
+                      <label
+                        for="summary"
+                        class="block text-base font-semibold text-gray-800"
+                      >
+                        جزء من الملخص
+                      </label>
+                      <input
+                        type="text"
+                        v-model="summary"
+                        id="summary"
+                        class="block mt-2 w-full rounded-md h-10 text-sm border border-gray-300 hover:shadow-sm focus:outline-none focus:border-gray-300 p-2"
+                      />
+                    </div>
+
+                  
+                 
+                    <!-- <div class="md:col-span-2">
+                      <label
+                        for="s-number"
+                        class="block text-base font-semibold text-gray-800"
+                      >
+                        رقم إشاري الجهة
+                      </label>
+                      <input
+                        v-model="s_number"
+                        type="number"
+                        min="1"
+                        id="s-number"
+                        class="block mt-2 h-10 w-full rounded-md border border-gray-300 hover:shadow-sm focus:outline-none focus:border-gray-300 px-2"
+                      />
+                    </div> -->
+
+                  
+                    <div class="flex">
+                      <div>
+                        <label
+                          class="block text-base font-semibold text-gray-800 mt-2"
+                        >
+                          السنة
+                        </label>
+
+                        <select
+                          id="small"
+                          class="block p-2 w-28 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          v-model="year_filter"
+                        >
+                          <option value="0" selected>اختر السنة</option>
+                          <option value="0">إلغاء</option>
+                          <option value="2023">2023</option>
+                          <option value="2024">2024</option>
+                          <option value="2025">2025</option>
+
+                          <option value="2026">2026</option>
+                          <!--    <option value="2027">2027</option>
+                              <option value="2028">2028</option>
+                              <option value="2029">2029</option>
+                              <option value="2030">2030</option>
+                              <option value="2031">2031</option>
+                              <option value="2032">2032</option>
+                              <option value="2033">2033</option>
+                              <option value="2034">2034</option>
+                              <option value="2035">2035</option>
+                              <option value="2036">2036</option>
+                              <option value="2037">2037</option>
+                              <option value="2038">2038</option>
+                              <option value="2039">2039</option>
+                              <option value="2040">2040</option>
+                              <option value="2041">2041</option>
+                              <option value="2042">2042</option>
+                              <option value="2043">2043</option>
+                              <option value="2044">2044</option>
+                              <option value="2045">2045</option>
+                              <option value="2046">2046</option>
+                              <option value="2047">2047</option>
+                              <option value="2048">2048</option>
+                              <option value="2049">2049</option>
+                              <option value="2050">2050</option>
+                              <option value="2051">2051</option>
+                              <option value="2052">2052</option>
+                              <option value="2053">2053</option>
+                              <option value="2054">2054</option>
+                              <option value="2055">2055</option>
+                              <option value="2056">2056</option>
+                              <option value="2057">2057</option>
+                              <option value="2058">2058</option>
+                              <option value="2059">2059</option>
+                              <option value="2060">2060</option>
+                              <option value="2061">2061</option>
+                              <option value="2062">2062</option>
+                              <option value="2063">2063</option>
+                              <option value="2064">2064</option>
+                              <option value="2065">2065</option>
+                              <option value="2066">2066</option>
+                              <option value="2067">2067</option>
+                              <option value="2068">2068</option>
+                              <option value="2069">2069</option>
+                              <option value="2070">2070</option> -->
+                        </select>
+                      </div>
+
+                      <!-- <div class="mr-6">
+                        <label
+                          class="block text-base font-semibold text-gray-800 mt-2"
+                        >
+                          التهميش
+                        </label>
+
+                        <select
+                          id="small"
+                          class="block p-2 w-48 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          v-model="sig_filter"
+                        >
+                          <option value="3" selected>الكل</option>
+
+                          <option value="1">البريد الذي لم يتم تهميشه</option>
+                          <option value="2">البريد الذي تم تهميشه</option>
+                        </select>
+                      </div> -->
+
+                     
+                    </div>
+
+                    <div class="flex justify-center col-span-6 w-full">
+                      <div class="mt-6">
+                        <button
+                          @click="
+                            page_num = 1;
+                            GetInboxs();
+                            filter = !filter;
+                          "
+                          id="search_button"
+                          class="px-8 mr-2 bg-green-700 text-green-50 rounded-md py-2 border border-green-300 hover:bg-green-800 focus:outline-none flex items-center justify-center col-span-2"
+                        >
+                          <span class="text-sm font-bold block ml-1"> بحث</span>
+                        </button>
+                      </div>
+
+                      <div class="mt-6">
+                        <button
+                          @click="search_reset()"
+                          id="search_button"
+                          class="px-8 mr-2 bg-green-700 text-green-50 rounded-md py-2 border border-green-300 hover:bg-green-800 focus:outline-none flex items-center justify-center col-span-2"
+                        >
+                          <span class="text-sm font-bold block ml-1">
+                            جديد</span
+                          >
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+
+
+   
+            </div>
+
+            <div
+              class="w-full mt-4 rounded-md flex flex-col lg:flex-row items-start divide-y-2 divide-gray-200"
+            >
+              <div class="w-full lg:w-8/12 ml-2">
+                البريد
+
+                <div
+                  class="flex items-center bg-gray-100 w-full text-xs pl-2 py-1 mt-2"
+                >
+                  <div class="w-8/12 flex items-center">
+                    <div class="max-w-2/12 py-1 pr-2 text-right">
+                      رقم الرسالة
+                    </div>
+                    <div class="w-10/12  text-center">الحالة</div>
+                 
+                  </div>
+
+                  <div class="w-4/12 text-center">الإجراءات</div>
+                </div>
+
+                <div class="min-h-64 text-sm bg-gray-100">
+                  <div
+                    v-for="mail in inboxMails"
+                    :key="mail.mail_id"
+                    :class="mail.flag | mail_state_inbox"
+                    class="group relative border-r-8 border-red-500 flex items-center bg-white hover:bg-gray-100 pl-2"
+                  >
+                    <button
+                      class="w-8/12 flex items-center"
+                      @click="
+                     
+                        show_senders(
+                          mail.mail_id,
+                          mail.type_of_mail,
+                          mail.mail_Number,
+                          mail.resendfrom,
+                          mail.measure_id,
+                        )
+                      "
+                    >
+                      <div class="w-2/12 pr-2 py-1 text-center">
+                        {{ mail.mail_Number }}
+                      </div>
+                      <div class="w-10/12  truncate text-center">
+                        {{ mail.state }}
+                      </div>
+
+                     
+                    </button>
+                    <div class="w-4/12 md:1/12 flex p-2  text-center">
+                      <div
+                        v-if="
+                          (mail.resendfrom == 0 && isperent != 'true') ||
+                          isperent == 'true'
+                        "
+                        class="w-1/3 flex justify-center items-center px-2"
+                      >
+                        <router-link
+                          title="عرض التفاصيل"
+                          :to="{
+                            name: 'inbox-show',
+                            params: {
+                              department_id2: mail.mangment_sender_id,
+                              mail: mail.mail_id,
+                              department: my_department_id,
+                              resended_from: mail.resendfrom,
+                              type: mail.type_of_mail,
+                              sends_id: mail.sends_id,
+                              mail_state_flag: mail.flag,
+                            },
+                          }"
+                          class=""
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current hover:text-green-500"
+                            version="1.1"
+                            id="Capa_1"
+                            x="0px"
+                            y="0px"
+                            viewBox="0 0 18.453 18.453"
+                            xml:space="preserve"
+                          >
+                            <rect
+                              x="2.711"
+                              y="4.058"
+                              width="8.23"
+                              height="1.334"
+                            />
+                            <path
+                              d="M14.972,14.088c0.638-1.127,0.453-2.563-0.475-3.49c-0.549-0.549-1.279-0.852-2.058-0.852
+                                                              c-0.779,0-1.51,0.303-2.059,0.852s-0.852,1.279-0.852,2.059c0,0.777,0.303,1.508,0.852,2.059c0.549,0.547,1.279,0.85,2.057,0.85
+                                                              c0.507,0,0.998-0.129,1.434-0.375l3.262,3.262l1.101-1.102L14.972,14.088z M13.664,13.881c-0.652,0.652-1.796,0.652-2.448,0
+                                                              c-0.675-0.676-0.675-1.773,0-2.449c0.326-0.326,0.762-0.506,1.225-0.506s0.897,0.18,1.224,0.506s0.507,0.762,0.507,1.225
+                                                              S13.991,13.554,13.664,13.881z"
+                            />
+                            <path
+                              d="M13.332,16.3H1.857c-0.182,0-0.329-0.148-0.329-0.328V1.638c0-0.182,0.147-0.329,0.329-0.329
+                                                              h11.475c0.182,0,0.328,0.147,0.328,0.329V8.95c0.475,0.104,0.918,0.307,1.31,0.597V1.638C14.97,0.735,14.236,0,13.332,0H1.857
+                                                              C0.954,0,0.219,0.735,0.219,1.638v14.334c0,0.902,0.735,1.637,1.638,1.637h11.475c0.685,0,1.009-0.162,1.253-0.76l-0.594-0.594
+                                                              C13.772,16.347,13.426,16.3,13.332,16.3z"
+                            />
+                            <rect
+                              x="2.711"
+                              y="7.818"
+                              width="8.23"
+                              height="1.334"
+                            />
+                          </svg>
+                        </router-link>
+                      </div>
+
+                      <div
+                        v-else
+                        class="w-1/3 flex justify-center items-center px-2"
+                      >
+                        <router-link
+                          title="عرض التفاصيل"
+                          :to="{
+                            name: 'inbox-show',
+                            params: {
+                              department_id2: perent_id,
+                              mail: mail.mail_id,
+                              department: my_department_id,
+                              resended_from: mail.resendfrom,
+                              type: mail.type_of_mail,
+                              sends_id: mail.sends_id,
+                              mail_state_flag: mail.flag,
+                            },
+                          }"
+                          class=""
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current hover:text-green-500"
+                            version="1.1"
+                            id="Capa_1"
+                            x="0px"
+                            y="0px"
+                            viewBox="0 0 18.453 18.453"
+                            xml:space="preserve"
+                          >
+                            <rect
+                              x="2.711"
+                              y="4.058"
+                              width="8.23"
+                              height="1.334"
+                            />
+                            <path
+                              d="M14.972,14.088c0.638-1.127,0.453-2.563-0.475-3.49c-0.549-0.549-1.279-0.852-2.058-0.852
+                                                              c-0.779,0-1.51,0.303-2.059,0.852s-0.852,1.279-0.852,2.059c0,0.777,0.303,1.508,0.852,2.059c0.549,0.547,1.279,0.85,2.057,0.85
+                                                              c0.507,0,0.998-0.129,1.434-0.375l3.262,3.262l1.101-1.102L14.972,14.088z M13.664,13.881c-0.652,0.652-1.796,0.652-2.448,0
+                                                              c-0.675-0.676-0.675-1.773,0-2.449c0.326-0.326,0.762-0.506,1.225-0.506s0.897,0.18,1.224,0.506s0.507,0.762,0.507,1.225
+                                                              S13.991,13.554,13.664,13.881z"
+                            />
+                            <path
+                              d="M13.332,16.3H1.857c-0.182,0-0.329-0.148-0.329-0.328V1.638c0-0.182,0.147-0.329,0.329-0.329
+                                                              h11.475c0.182,0,0.328,0.147,0.328,0.329V8.95c0.475,0.104,0.918,0.307,1.31,0.597V1.638C14.97,0.735,14.236,0,13.332,0H1.857
+                                                              C0.954,0,0.219,0.735,0.219,1.638v14.334c0,0.902,0.735,1.637,1.638,1.637h11.475c0.685,0,1.009-0.162,1.253-0.76l-0.594-0.594
+                                                              C13.772,16.347,13.426,16.3,13.332,16.3z"
+                            />
+                            <rect
+                              x="2.711"
+                              y="7.818"
+                              width="8.23"
+                              height="1.334"
+                            />
+                          </svg>
+                        </router-link>
+                      </div>
+
+                      <div
+                        v-if="mail.resendfrom == 0"
+                        class="w-1/3 flex justify-center items-center"
+                      >
+                        <button
+                          v-if="roles.includes('sss')"
+                          @click="
+                            GetAllDocumentsAndReplies(
+                              mail.mail_id,
+                              my_user_id,
+                              mail.mangment_sender_id,
+                              my_department_id,
+                              mail.sends_id,
+                            ),
+                              (measure_id_for_photo = mail.measure_id)
+                          "
+                          title="عرض المستندات"
+                          class="focus:outline-none"
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current hover:text-blue-500"
+                            id="Capa_1"
+                            enable-background="new 0 0 512 512"
+                            height="512"
+                            viewBox="0 0 512 512"
+                            width="512"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g>
+                              <path
+                                d="m437 129h-14v-54c0-41.355-33.645-75-75-75h-184c-41.355 0-75 33.645-75 75v54h-14c-41.355 0-75 33.645-75 75v120c0 41.355 33.645 75 75 75h14v68c0 24.813 20.187 45 45 45h244c24.813 0 45-20.187 45-45v-68h14c41.355 0 75-33.645 75-75v-120c0-41.355-33.645-75-75-75zm-318-54c0-24.813 20.187-45 45-45h184c24.813 0 45 20.187 45 45v54h-274zm274 392c0 8.271-6.729 15-15 15h-244c-8.271 0-15-6.729-15-15v-148h274zm89-143c0 24.813-20.187 45-45 45h-14v-50h9c8.284 0 15-6.716 15-15s-6.716-15-15-15h-352c-8.284 0-15 6.716-15 15s6.716 15 15 15h9v50h-14c-24.813 0-45-20.187-45-45v-120c0-24.813 20.187-45 45-45h362c24.813 0 45 20.187 45 45z"
+                              />
+                              <path
+                                d="m296 353h-80c-8.284 0-15 6.716-15 15s6.716 15 15 15h80c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                              <path
+                                d="m296 417h-80c-8.284 0-15 6.716-15 15s6.716 15 15 15h80c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                              <path
+                                d="m128 193h-48c-8.284 0-15 6.716-15 15s6.716 15 15 15h48c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                            </g>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <div
+                        v-else
+                        class="w-1/3 flex justify-center items-center"
+                      >
+                        <button
+                          v-if="roles.includes('sss')"
+                          @click="
+                            GetAllDocumentsAndReplies(
+                              mail.mail_id,
+                              my_user_id,
+                              mail.resendfrom,
+                              my_department_id,
+                              mail.sends_id,
+                            ),
+                              (measure_id_for_photo = mail.measure_id)
+                          "
+                          title="عرض المستندات"
+                          class="focus:outline-none"
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current hover:text-blue-500"
+                            id="Capa_1"
+                            enable-background="new 0 0 512 512"
+                            height="512"
+                            viewBox="0 0 512 512"
+                            width="512"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g>
+                              <path
+                                d="m437 129h-14v-54c0-41.355-33.645-75-75-75h-184c-41.355 0-75 33.645-75 75v54h-14c-41.355 0-75 33.645-75 75v120c0 41.355 33.645 75 75 75h14v68c0 24.813 20.187 45 45 45h244c24.813 0 45-20.187 45-45v-68h14c41.355 0 75-33.645 75-75v-120c0-41.355-33.645-75-75-75zm-318-54c0-24.813 20.187-45 45-45h184c24.813 0 45 20.187 45 45v54h-274zm274 392c0 8.271-6.729 15-15 15h-244c-8.271 0-15-6.729-15-15v-148h274zm89-143c0 24.813-20.187 45-45 45h-14v-50h9c8.284 0 15-6.716 15-15s-6.716-15-15-15h-352c-8.284 0-15 6.716-15 15s6.716 15 15 15h9v50h-14c-24.813 0-45-20.187-45-45v-120c0-24.813 20.187-45 45-45h362c24.813 0 45 20.187 45 45z"
+                              />
+                              <path
+                                d="m296 353h-80c-8.284 0-15 6.716-15 15s6.716 15 15 15h80c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                              <path
+                                d="m296 417h-80c-8.284 0-15 6.716-15 15s6.716 15 15 15h80c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                              <path
+                                d="m128 193h-48c-8.284 0-15 6.716-15 15s6.716 15 15 15h48c8.284 0 15-6.716 15-15s-6.716-15-15-15z"
+                              />
+                            </g>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <div class=" flex justify-center items-center">
+                        <!-- v-if="roles.includes('g')" -->
+                        <button
+                          :class="mail.flag != 2 ? 'hidden' : ''"
+                          @click="read_it_mail(mail.mail_id)"
+                          title="تأكيد قراءة البريد"
+                          class="focus:outline-none"
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current text-gray-400 hover:text-green-500"
+                            id="Capa_1"
+                            enable-background="new 0 0 512 512"
+                            height="512"
+                            viewBox="0 0 512 512"
+                            width="512"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g>
+                              <path
+                                d="m153 157.328c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h206c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5z"
+                              />
+                              <path
+                                d="m359 235.578c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-60.809c-12.709-7.789-27.642-12.288-43.608-12.288-16.628 0-32.126 4.894-45.166 13.288h-56.417c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h38.926c-11.593 13.094-19.148 29.827-20.718 48.25h-18.208c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h18.259c1.746 18.709 9.668 35.647 21.711 48.75h-39.97c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h58.244c12.649 7.687 27.486 12.117 43.339 12.117 15.738 0 30.688-4.321 43.518-12.117h60.899c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-42.671c5.17-5.667 9.62-12.112 13.175-19.229 1.851-3.706.348-8.21-3.358-10.062-3.705-1.85-8.21-.347-10.061 3.358-11.723 23.47-35.29 38.049-61.503 38.049-37.882 0-68.702-30.819-68.702-68.702s30.82-68.703 68.702-68.703c37.883 0 68.703 30.82 68.703 68.703v.21c0 .024.003.047.003.071 0 .018-.003.036-.003.054 0 4.143 3.358 7.5 7.5 7.5h28.215c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-21.042c-1.61-18.891-9.503-36.015-21.599-49.25h42.641z"
+                              />
+                              <path
+                                d="m359 412.328h-206c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h206c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5z"
+                              />
+                              <path
+                                d="m418.594 43.254h-57.432c-1.703-7.296-8.247-12.754-16.055-12.754h-36.607v-1.652c0-15.907-12.941-28.848-28.847-28.848h-47.306c-15.906 0-28.847 12.941-28.847 28.848v1.652h-36.607c-7.808 0-14.351 5.458-16.055 12.754h-57.432c-15.164 0-27.5 12.337-27.5 27.5v413.746c0 15.163 12.336 27.5 27.5 27.5h91.423c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-91.423c-6.893 0-12.5-5.607-12.5-12.5v-413.746c0-6.893 5.607-12.5 12.5-12.5h56.986v15h-41.986c-6.893 0-12.5 5.607-12.5 12.5v383.746c0 6.893 5.607 12.5 12.5 12.5h295.188c6.893 0 12.5-5.607 12.5-12.5v-383.746c0-6.893-5.607-12.5-12.5-12.5h-41.986v-15h56.986c6.893 0 12.5 5.607 12.5 12.5v413.746c0 6.893-5.607 12.5-12.5 12.5h-198.765c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h198.765c15.164 0 27.5-12.337 27.5-27.5v-413.746c0-15.163-12.337-27.5-27.5-27.5zm-253.201 3.746c0-.827.673-1.5 1.5-1.5h44.107c4.142 0 7.5-3.357 7.5-7.5v-9.152c0-7.636 6.212-13.848 13.847-13.848h47.306c7.635 0 13.847 6.212 13.847 13.848v9.152c0 4.143 3.358 7.5 7.5 7.5h44.107c.827 0 1.5.673 1.5 1.5 0 47.697.075 57.448-.045 59.588-.054.963-.705 1.417-1.455 1.417h-178.214c-.827 0-1.5-.673-1.5-1.5 0-24.736 0-29.663 0-59.505zm235.701 420h-290.188v-378.746h39.486v18.251c0 9.101 7.405 16.5 16.5 16.5h178.215c9.046 0 16.5-7.377 16.5-16.5v-18.251h39.486v378.746z"
+                              />
+                              <path
+                                d="m283.604 261.149-46.186 44.447-10.337-20.891c-1.837-3.713-6.338-5.234-10.048-3.396-3.712 1.837-5.233 6.335-3.396 10.048l14.879 30.07c2.242 4.529 8.258 5.603 11.923 2.078l53.566-51.549c2.984-2.872 3.076-7.62.204-10.604s-7.62-3.074-10.605-.203z"
+                              />
+                            </g>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div
+                      class="group-hover:block items-end hidden absolute z-50 w-10/12 bottom-20 left-0 min-h-32 h-full bg-white p-2 border-4 rounded-md overflow-y-auto"
+                    >
+                      <div class="flex items-center justify-between">
+                        <p class="font-bold">ملخص الرسالة</p>
+
+                        <div class="underline">
+                          <!--  تاريخ الارسال - {{ mail.send_time }}-->
+                          تاريخ الارسال - {{ mail.send_time.substring(0, 10) }}
+                        </div>
+                        <div class="underline">
+                          <!-- وقت الارسال - {{ mail.time }}-->
+                          وقت الارسال - {{ mail.send_time.substring(11, 16) }}
+                        </div>
+                      </div>
+
+                      <p class="mt-2">
+                        {{ mail.summary }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="flex justify-end mt-8 mx-auto px-4 sm:px-6 lg:px-8 w-full bg-white relative"
+                >
+                  <pagination
+                    dir="rtl"
+                    v-model="page_num"
+                    :per-page="page_size"
+                    :records="total_of_transaction"
+                    @paginate="GetInboxs"
+                    class="z-10"
+                  />
+                  <div class="">
+                    <div
+                      class="absolute z-0 top-0 py-2 left-0 w-full text-left p-1 flex bg-white items-center justify-end"
+                    >
+                      <span class="text-xs ml-1"> عدد الرسائل </span>
+                      {{ total_of_transaction }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w-full lg:w-7/12 mr-2 mt-2">
+                الجهات المرسل إليها والوارد منها
+                <span v-if="show_senders_mail">
+                  - رقم البريد
+                  <span class="font-bold">{{ show_senders_mail }}</span>
+                </span>
+                <div
+                  class="flex justify-between bg-gray-100 w-full text-right text-sm pl-2 mt-2"
+                >
+                  <div class="w-3/12 py-1 pr-1">اسم الإدارة</div>
+
+                  <div class="w-2/12 py-1">وقت الإرسال</div>
+                  <div class="w-2/12 py-1">تاريخ الرد</div>
+
+                  <div class="w-2/12 py-1">الحالة</div>
+                  <div class="w-2/12 py-1">وقت القراءة</div>
+                  <div class="w-1/12 py-1">الإجراء</div>
+                </div>
+
+                <div
+                  class="min-h-64 h-full overflow-y-auto max-h-64 text-sm bg-gray-100"
+                >
+                  <div
+                    v-for="sender in senders"
+                    :key="sender.department_id"
+                    :class="sender.flag | mail_state_inbox"
+                    class="group relative pt-1 border-r-8 bg-white hover:bg-gray-100 pl-2"
+                  >
+                    <button
+                      @click="
+                        to_pass_data_to_get_mail_by_id(
+                          sender.department_id,
+                          sender.send_ToId,
+                          sender.department_name,
+                          sender.flag,
+                          sender.sends_from,
+                          sender.shared,
+                        ),
+                          back_resend()
+                      "
+                      :class="
+                        ((sender.sends_from == my_department_id &&
+                          sender.reply_readed) ||
+                          (sender.sends_from != my_department_id &&
+                            sender.reply_readed_inbox)) &&
+                        (sender.flag == 4 || sender.flag == 5)
+                          ? 'bg-red-100'
+                          : ''
+                      "
+                      class="flex w-full text-right"
+                    >
+                      <div class="w-3/12 py-1">
+                        {{ sender.department_name }}
+                      </div>
+
+                      <div class="w-2/12 py-1">
+                        {{ sender.time_of_send }}
+                      </div>
+
+                      <div class="w-2/12 py-1">
+                        {{ sender.date_read }}
+                      </div>
+
+                      <div class="w-2/12 py-1">
+                        {{ sender.state }}
+                      </div>
+
+                      <div class="w-2/12 py-1">
+                        {{ sender.time_of_read }}
+                      </div>
+
+                      <div
+                        v-if="
+                          ((sender.sends_from == my_department_id &&
+                            sender.reply_readed) ||
+                            (sender.sends_from != my_department_id &&
+                              sender.reply_readed_inbox)) &&
+                          (sender.flag == 4 || sender.flag == 5)
+                        "
+                        class="w-1/12 py-1 flex"
+                      >
+                        <button
+                          @click="
+                            ReplyReaded(
+                              sender.department_id,
+                              sender.sends_from,
+                              sender.send_ToId,
+                            )
+                          "
+                          title="تأكيد قراءة الرد"
+                          class="focus:outline-none"
+                        >
+                          <svg
+                            class="w-4 h-4 fill-current text-gray-400 hover:text-green-500"
+                            id="Capa_1"
+                            enable-background="new 0 0 512 512"
+                            height="512"
+                            viewBox="0 0 512 512"
+                            width="512"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g>
+                              <path
+                                d="m153 157.328c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h206c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5z"
+                              />
+                              <path
+                                d="m359 235.578c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-60.809c-12.709-7.789-27.642-12.288-43.608-12.288-16.628 0-32.126 4.894-45.166 13.288h-56.417c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h38.926c-11.593 13.094-19.148 29.827-20.718 48.25h-18.208c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h18.259c1.746 18.709 9.668 35.647 21.711 48.75h-39.97c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h58.244c12.649 7.687 27.486 12.117 43.339 12.117 15.738 0 30.688-4.321 43.518-12.117h60.899c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-42.671c5.17-5.667 9.62-12.112 13.175-19.229 1.851-3.706.348-8.21-3.358-10.062-3.705-1.85-8.21-.347-10.061 3.358-11.723 23.47-35.29 38.049-61.503 38.049-37.882 0-68.702-30.819-68.702-68.702s30.82-68.703 68.702-68.703c37.883 0 68.703 30.82 68.703 68.703v.21c0 .024.003.047.003.071 0 .018-.003.036-.003.054 0 4.143 3.358 7.5 7.5 7.5h28.215c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-21.042c-1.61-18.891-9.503-36.015-21.599-49.25h42.641z"
+                              />
+                              <path
+                                d="m359 412.328h-206c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h206c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5z"
+                              />
+                              <path
+                                d="m418.594 43.254h-57.432c-1.703-7.296-8.247-12.754-16.055-12.754h-36.607v-1.652c0-15.907-12.941-28.848-28.847-28.848h-47.306c-15.906 0-28.847 12.941-28.847 28.848v1.652h-36.607c-7.808 0-14.351 5.458-16.055 12.754h-57.432c-15.164 0-27.5 12.337-27.5 27.5v413.746c0 15.163 12.336 27.5 27.5 27.5h91.423c4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5h-91.423c-6.893 0-12.5-5.607-12.5-12.5v-413.746c0-6.893 5.607-12.5 12.5-12.5h56.986v15h-41.986c-6.893 0-12.5 5.607-12.5 12.5v383.746c0 6.893 5.607 12.5 12.5 12.5h295.188c6.893 0 12.5-5.607 12.5-12.5v-383.746c0-6.893-5.607-12.5-12.5-12.5h-41.986v-15h56.986c6.893 0 12.5 5.607 12.5 12.5v413.746c0 6.893-5.607 12.5-12.5 12.5h-198.765c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5h198.765c15.164 0 27.5-12.337 27.5-27.5v-413.746c0-15.163-12.337-27.5-27.5-27.5zm-253.201 3.746c0-.827.673-1.5 1.5-1.5h44.107c4.142 0 7.5-3.357 7.5-7.5v-9.152c0-7.636 6.212-13.848 13.847-13.848h47.306c7.635 0 13.847 6.212 13.847 13.848v9.152c0 4.143 3.358 7.5 7.5 7.5h44.107c.827 0 1.5.673 1.5 1.5 0 47.697.075 57.448-.045 59.588-.054.963-.705 1.417-1.455 1.417h-178.214c-.827 0-1.5-.673-1.5-1.5 0-24.736 0-29.663 0-59.505zm235.701 420h-290.188v-378.746h39.486v18.251c0 9.101 7.405 16.5 16.5 16.5h178.215c9.046 0 16.5-7.377 16.5-16.5v-18.251h39.486v378.746z"
+                              />
+                              <path
+                                d="m283.604 261.149-46.186 44.447-10.337-20.891c-1.837-3.713-6.338-5.234-10.048-3.396-3.712 1.837-5.233 6.335-3.396 10.048l14.879 30.07c2.242 4.529 8.258 5.603 11.923 2.078l53.566-51.549c2.984-2.872 3.076-7.62.204-10.604s-7.62-3.074-10.605-.203z"
+                              />
+                            </g>
+                          </svg>
+                        </button>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="realated_departments.length > 0" class="mt-2 flex">
+                  <div class="sm:col-span-4 w-10/12">
+                    <label
+                      tabindex="5"
+                      for="department"
+                      class="block text-sm font-semibold text-gray-800"
+                    >
+                      الإدارات المشتركة
+                    </label>
+
+                    <div class="relative">
+                      <button
+                        @click="
+                          realated_departmentselect = !realated_departmentselect
+                        "
+                        id="realated_department"
+                        class="overflow-hidden text-right block mt-2 w-full rounded-md h-10 border text-xs bg-white border-green-400 hover:shadow-sm focus:outline-none focus:border-green-400 p-2"
+                      >
+                        {{ realated_departmentNameSelected }}
+                      </button>
+
+                      <div
+                        v-if="realated_departmentselect"
+                        class="border text-sm bg-white border-green-400 p-2 absolute w-full z-20 shadow h-40 overflow-y-scroll rounded-b-md"
+                      >
+                        <button
+                          class="block focus:outline-none w-full my-1 text-right"
+                          @click="
+                            select_realated_department(
+                              realated_department.id,
+                              realated_department.departmentName,
+                              index,
+                            );
+                            realated_departmentselect =
+                              !realated_departmentselect;
+                          "
+                          v-for="(
+                            realated_department, index
+                          ) in realated_departments"
+                          :key="realated_department.id"
+                        >
+                          {{ realated_department.departmentName }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="sm:col-span-1 flex justify-center w-2/12"
+                    v-if="realated_departmentNameSelected"
+                  >
+                    <button
+                      @click="ResharedMailWithAnotherDep()"
+                      class="mt-8 rounded-md text-green-400 duration-200 hover:text-green-500 text-base font-semibold w-8 h-8"
+                    >
+                      <svg
+                        class="fill-current w-full h-full"
+                        version="1.1"
+                        id="Capa_1"
+                        x="0px"
+                        y="0px"
+                        viewBox="0 0 512 512"
+                        style="enable-background: new 0 0 512 512"
+                        xml:space="preserve"
+                      >
+                        <g>
+                          <g>
+                            <path
+                              d="M256,0C114.833,0,0,114.833,0,256s114.833,256,256,256s256-114.853,256-256S397.167,0,256,0z M256,472.341
+                                                            c-119.275,0-216.341-97.046-216.341-216.341S136.725,39.659,256,39.659S472.341,136.705,472.341,256S375.295,472.341,256,472.341z
+                                                            "
+                            />
+                          </g>
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M355.148,234.386H275.83v-79.318c0-10.946-8.864-19.83-19.83-19.83s-19.83,8.884-19.83,19.83v79.318h-79.318
+                                                            c-10.966,0-19.83,8.884-19.83,19.83s8.864,19.83,19.83,19.83h79.318v79.318c0,10.946,8.864,19.83,19.83,19.83
+                                                            s19.83-8.884,19.83-19.83v-79.318h79.318c10.966,0,19.83-8.884,19.83-19.83S366.114,234.386,355.148,234.386z"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div v-if="roles.includes('r')" class="w-4/12 mr-2">
+                الردود - {{ mangment_sender_to_get_mail_by_id }}
+
+                <div v-if="mangment_sender_to_get_mail_by_id != ''" class="bg-gray-100 w-full text-sm p-2 mt-2">
+                  <div id="scroll" class="
+                        h-56
+                        overflow-y-scroll
+                        mt-3
+                        rounded-lg
+                        py-
+                        border border-gray-300
+                      ">
+                    <div v-for="(reply, index) in replies" :key="index" :class="
+                      reply.reply.to == my_department_id
+                        ? ' flex-row-reverse justify-start'
+                        : 'justify-start'
+                    " class="w-full my-0.5 flex px-2">
+                      <div class="">
+                        <div class="flex" :class="
+                          reply.reply.to == my_department_id
+                            ? '  justify-end'
+                            : 'justify-end flex-row-reverse'
+                        ">
+
+
+                          <button v-if="reply.reply.to != my_department_id && reply.reply.userId == my_user_id"
+                            @click="alert_delete_document = true, reply_id_to_delete = reply.reply.replyId" type="button"
+                            class="
+                                
+                                  hover:bg-red-500
+                                  duration-500
+                                  p-1
+                                  rounded-full
+                                  focus:outline-none
+                                  ml-2
+                                ">
+                            <svg class="
+                                    w-4
+                                    h-4
+                                    stroke-current
+                                    text-red
+                                    mx-auto
+                                  " width="24" height="25" viewBox="0 0 24 25" fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 6.5H5H21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                              <path
+                                d="M8 6.5V4.5C8 3.96957 8.21071 3.46086 8.58579 3.08579C8.96086 2.71071 9.46957 2.5 10 2.5H14C14.5304 2.5 15.0391 2.71071 15.4142 3.08579C15.7893 3.46086 16 3.96957 16 4.5V6.5M19 6.5V20.5C19 21.0304 18.7893 21.5391 18.4142 21.9142C18.0391 22.2893 17.5304 22.5 17 22.5H7C6.46957 22.5 5.96086 22.2893 5.58579 21.9142C5.21071 21.5391 5 21.0304 5 20.5V6.5H19Z"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                          </button>
+
+
+
+
+                          <div v-if="alert_delete_document" class="
+          w-screen
+          h-full
+          flex
+          justify-center
+          items-center
+          absolute
+          inset-0
+          z-50
+          overflow-hidden
+          bg-black bg-opacity-70
+        ">
+                            <div class="
+            bg-yellow-100
+            rounded-md
+            w-1/3
+            py-10
+            flex flex-col
+            justify-center
+            items-center
+          ">
+                              <div class="">
+                                <svg class="w-20 h-20 stroke-current text-red-600" fill="none" stroke="currentColor"
+                                  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                  </path>
+                                </svg>
+                              </div>
+                              <p class="text-xl font-bold mt-4">هل انت متأكد من عملية الحذف؟</p>
+                              <p class="text-gray-600">لن تتمكن من استرداد الرد بعد حذفه.</p>
+
+                              <div class="mt-6">
+                                <button @click="deletereply()" class="
+                bg-red-600
+                hover:bg-red-700 hover:shadow-lg
+                duration-200
+                rounded
+                text-white
+                w-32
+                py-1
+                ml-2
+              ">
+                                  نعم متأكد
+                                </button>
+                                <button @click="alert_delete_document = false" class="
+                bg-gray-400
+                hover:bg-gray-700 hover:shadow-lg
+                duration-200
+                rounded
+                text-white
+                w-32
+                py-1
+                mr-2
+              ">
+                                  إلغاء
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div v-if="reply.resources == true" class="mx-2">
+                            <button v-if="roles.includes('s')" @click="GetResources_ById(reply.reply.replyId)" class="
+                                  px-2
+                                  text-xs
+                                  rounded
+                                  leading-9
+                                  text-white
+                                  bg-red-400
+                                  flex
+                                  items-center
+                                ">
+                              عرض الصور
+                              <svg class="stroke-current mr-2 w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                  d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z"
+                                  stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                  d="M8.5 10C9.32843 10 10 9.32843 10 8.5C10 7.67157 9.32843 7 8.5 7C7.67157 7 7 7.67157 7 8.5C7 9.32843 7.67157 10 8.5 10Z"
+                                  stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M21 15L16 10L5 21" stroke-width="1" stroke-linecap="round"
+                                  stroke-linejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+
+
+
+
+                          <div :class="
+                            reply.reply.to == my_department_id
+                              ? 'bg-gray-700'
+                              : 'bg-blue-700'
+                          " class="
+                                text-white
+                                max-w-10/12
+                                py-0
+                                leading-9
+                                px-2
+                                rounded
+                              ">
+                            {{ reply.reply.mail_detail }}
+                          </div>
+
+                        </div>
+
+                        <div class="mt-1 text-sm" :class="
+                          reply.reply.to == my_department_id
+                            ? 'text-left'
+                            : 'text-right'
+                        ">
+                          {{ reply.reply.date }}
+                        </div>
+
+
+                      </div>
+
+
+
+                    </div>
+                  </div>
+
+
+
+
+                  <div class="flex justify-between items-center mt-4">
+                    <div class="w-8/12 flex justify-between">
+                      <div class="w-full">
+                        <textarea id="" class="
+                              block
+                              w-full
+                              h-24
+                              text-sm
+                              rounded-md
+                              border border-green-400
+                              hover:shadow-sm
+                              focus:outline-none focus:border-gray-300
+                              p-2
+                            " v-model="reply_to_add">
+                          </textarea>
+                      </div>
+                    </div>
+
+                    <div class="w-3/12">
+                      <div class="">
+                        <a id="a4" @click="reply1()">
+                          <label v-if="reply_to_add != ''" class="
+                                w-full
+                                h-10
+                                flex
+                                justify-center
+                                items-center
+                                py-2
+                                bg-white
+                                rounded-lg
+                                tracking-wide
+                                border border-green-600
+                                cursor-pointer
+                                hover:text-white hover:bg-green-600
+                                focus:outline-none
+                                duration-300
+                              ">
+                            <svg class="w-4 h-4 ml-1" fill="currentColor" version="1.1" id="Capa_1"
+                              xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+                              y="0px" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512"
+                              xml:space="preserve">
+                              <g>
+                                <g>
+                                  <g>
+                                    <path d="M509.501,116.968c1.6-1.6,2.499-3.771,2.499-6.035V76.8c-0.019-1.015-0.222-2.019-0.598-2.962
+                                                  c-0.076-0.203-0.14-0.399-0.23-0.595c-0.391-0.864-0.925-1.655-1.579-2.342c-0.123-0.128-0.265-0.221-0.396-0.341
+                                                  c-0.309-0.312-0.643-0.6-0.997-0.86l-102.4-68.267C404.399,0.499,402.752,0,401.067,0H110.933
+                                                  c-1.685,0.001-3.331,0.499-4.733,1.434L3.8,69.7c-0.354,0.26-0.688,0.548-0.997,0.86c-0.131,0.12-0.273,0.214-0.396,0.341
+                                                  c-0.654,0.687-1.188,1.478-1.579,2.342c-0.091,0.195-0.154,0.392-0.23,0.595C0.222,74.781,0.019,75.785,0,76.8v34.133
+                                                  c-0.001,2.263,0.898,4.434,2.499,6.035c1.6,1.6,3.771,2.499,6.035,2.499h73.225L0.496,347c-0.114,0.476-0.184,0.961-0.21,1.449
+                                                  c-0.138,0.463-0.233,0.937-0.286,1.417V435.2c0.028,23.553,19.114,42.639,42.667,42.667h17.067v17.067
+                                                  c0.011,9.421,7.645,17.056,17.067,17.067h358.4c9.421-0.011,17.056-7.645,17.067-17.067v-17.067h17.067
+                                                  c23.553-0.028,42.639-19.114,42.667-42.667v-85.333c-0.218-0.946-0.383-1.903-0.496-2.867l-81.262-227.533h73.225
+                                                  C505.73,119.467,507.901,118.568,509.501,116.968z M113.517,17.067h284.967l76.8,51.2H36.717L113.517,17.067z M76.8,494.933
+                                                  v-17.067h358.404l0.008,17.067H76.8z M494.933,435.2c-0.015,14.132-11.468,25.585-25.6,25.6H42.667
+                                                  c-14.132-0.015-25.585-11.468-25.6-25.6v-76.8H128v42.667c0.015,14.132,11.468,25.585,25.6,25.6h204.8
+                                                  c14.132-0.015,25.585-11.468,25.6-25.6V358.4h110.933V435.2z M164.632,390.035c1.6,1.6,3.771,2.499,6.035,2.499h170.667
+                                                  c2.263,0.001,4.434-0.898,6.035-2.499c1.6-1.6,2.499-3.771,2.499-6.035v-25.6h17.067v42.667
+                                                  c-0.005,4.711-3.822,8.529-8.533,8.533H153.6c-4.711-0.005-8.529-3.822-8.533-8.533V358.4h17.067V384
+                                                  C162.133,386.263,163.032,388.434,164.632,390.035z M179.2,375.467V358.4h17.067v17.067H179.2z M213.333,375.467V358.4H230.4
+                                                  v17.067H213.333z M247.467,375.467V358.4h17.067v17.067H247.467z M281.6,375.467V358.4h17.067v17.067H281.6z M315.733,375.467
+                                                  V358.4H332.8v17.067H315.733z M491.358,341.333H20.642L99.88,119.467h312.24L491.358,341.333z M494.933,102.4H17.067V85.333
+                                                  h477.867V102.4z" />
+                                    <path d="M68.267,375.467H51.2c-9.421,0.011-17.056,7.646-17.067,17.067V409.6c0.011,9.421,7.645,17.056,17.067,17.067h17.067
+                                                  c9.421-0.011,17.056-7.645,17.067-17.067v-17.067C85.323,383.112,77.688,375.477,68.267,375.467z M51.2,409.6v-17.067h17.067
+                                                  l0.012,17.067H51.2z" />
+                                    <path d="M388.067,136.533H123.933c-7.21,0.012-13.639,4.545-16.071,11.333L53,301.458c-1.863,5.227-1.07,11.034,2.127,15.57
+                                                  s8.399,7.236,13.948,7.238h373.85c5.548-0.003,10.748-2.701,13.945-7.235c3.197-4.534,3.991-10.339,2.13-15.565l-54.862-153.6
+                                                  C401.705,141.079,395.277,136.546,388.067,136.533z M69.067,307.225l0.009-0.017V307.2l54.858-153.6h264.129l54.862,153.6
+                                                  L69.067,307.225z" />
+                                    <path
+                                      d="M128.009,221.867c1.682-0.001,3.326-0.5,4.725-1.434l25.6-17.067c3.872-2.633,4.899-7.894,2.302-11.79
+                                                  s-7.849-4.971-11.768-2.409l-25.6,17.067c-3.13,2.087-4.524,5.977-3.432,9.577C120.927,219.41,124.247,221.87,128.009,221.867z" />
+                                    <path
+                                      d="M179.2,187.733c2.855,0.03,5.532-1.385,7.115-3.761c1.584-2.376,1.86-5.39,0.735-8.014
+                                                  c-1.031-2.685-3.362-4.656-6.181-5.227c-2.819-0.571-5.733,0.338-7.728,2.41c-0.755,0.829-1.363,1.782-1.796,2.817
+                                                  c-1.122,2.625-0.844,5.639,0.74,8.013C173.67,186.346,176.346,187.761,179.2,187.733z" />
+                                    <path d="M225.542,172.183l-110.933,76.8c-3.071,2.125-4.403,6.001-3.287,9.565c1.116,3.564,4.419,5.989,8.154,5.984
+                                                  c1.733,0.001,3.426-0.529,4.85-1.517l110.933-76.8c3.864-2.687,4.824-7.996,2.144-11.865
+                                                  C234.723,170.482,229.417,169.512,225.542,172.183z" />
+                                    <path
+                                      d="M463.275,407.125c0.829,0.753,1.78,1.359,2.813,1.792c2.066,0.911,4.421,0.911,6.487,0
+                                                  c1.034-0.433,1.987-1.039,2.817-1.792c0.751-0.832,1.357-1.784,1.792-2.817c0.438-1.026,0.67-2.127,0.683-3.242
+                                                  c-0.016-0.545-0.073-1.088-0.171-1.625c-0.082-0.563-0.255-1.109-0.513-1.617c-0.187-0.546-0.447-1.064-0.771-1.542
+                                                  c-0.313-0.446-0.654-0.872-1.021-1.275c-0.816-0.771-1.772-1.379-2.817-1.792c-3.177-1.341-6.849-0.634-9.3,1.792l-1.025,1.275
+                                                  c-0.324,0.477-0.583,0.996-0.771,1.542c-0.258,0.507-0.43,1.053-0.508,1.617c-0.1,0.536-0.157,1.08-0.171,1.625
+                                                  c0.012,1.115,0.243,2.216,0.679,3.242C461.914,405.342,462.521,406.295,463.275,407.125z" />
+                                    <path d="M431.954,408.916c2.067,0.911,4.421,0.911,6.487,0c1.034-0.433,1.987-1.039,2.817-1.792
+                                                  c0.751-0.832,1.357-1.784,1.792-2.817c0.437-1.025,0.669-2.126,0.683-3.241c-0.016-0.545-0.073-1.088-0.171-1.625
+                                                  c-0.082-0.563-0.255-1.109-0.513-1.617c-0.187-0.546-0.447-1.064-0.771-1.542c-0.338-0.425-0.679-0.85-1.021-1.275
+                                                  c-0.83-0.753-1.783-1.359-2.817-1.792c-3.178-1.333-6.845-0.626-9.3,1.792l-1.025,1.275c-0.324,0.477-0.583,0.996-0.771,1.542
+                                                  c-0.258,0.507-0.43,1.053-0.508,1.617c-0.1,0.536-0.157,1.08-0.171,1.625c-0.029,1.119,0.204,2.229,0.679,3.242
+                                                  C428.126,406.449,429.813,408.136,431.954,408.916z" />
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+
+                            <span class="text-xs leading-normal"> تصوير </span>
+                          </label>
+                        </a>
+
+                    
+                      </div>
+
+                      <button v-if="reply_to_add != ''" @click="AddReply()" class="
+                            mt-2
+                            w-full
+                            flex
+                            items-center
+                            justify-center
+                            h-10
+                            py-1
+                            bg-white
+                            rounded-lg
+                            text-blue-600
+                            tracking-wide
+                            border border-blue-600
+                            cursor-pointer
+                            hover:text-white hover:bg-blue-600
+                            focus:outline-none
+                            duration-300
+                          ">
+                        <span class="leading-normal">إرسال</span>
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 441 441" fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0)">
+                            <path
+                              d="M26.2637 181.168L382.073 33.5286C397.063 27.3081 413.997 30.0445 426.267 40.6664C438.538 51.29 443.669 67.6578 439.659 83.384L404.694 220.501L439.659 357.617C443.669 373.343 438.538 389.711 426.268 400.335C413.974 410.979 397.036 413.681 382.073 407.472L26.2637 259.833C10.0639 253.111 0.000120282 238.04 0.000120282 220.501C0.000120282 202.961 10.0639 187.89 26.2637 181.168ZM36.1681 235.966L391.977 383.605C397.96 386.087 404.456 385.039 409.354 380.798C414.252 376.558 416.22 370.279 414.619 364.001L381.321 233.42H252.927C245.791 233.42 240.007 227.636 240.007 220.5C240.007 213.364 245.791 207.579 252.927 207.579H381.32L414.619 76.9998C416.22 70.7224 414.252 64.4434 409.354 60.203C404.457 55.9627 397.963 54.9136 391.978 57.396L36.1681 205.035C26.5859 209.011 25.8408 217.878 25.8408 220.501C25.8408 223.123 26.5859 231.99 36.1681 235.966Z"
+                              fill="currentColor" />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0">
+                              <rect width="441" height="441" fill="white" transform="matrix(-1 0 0 1 441 0)" />
+                            </clipPath>
+                          </defs>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+
+            <section
+              v-if="
+                (resend_for_done == 0 &&
+                  departmentName &&
+                  roles.includes('sr')) ||
+                (resend_for_done != my_department_id &&
+                  departmentName &&
+                  roles.includes('sr')) ||
+                (resend_for_done == my_department_id &&
+                  departmentName &&
+                  roles.includes('sr') &&
+                  departmentflag > 2)
+              "
+              class="bg-gray-100 rounded-md p-6 mt-16"
+            >
+              <p class="block text-sm font-semibold text-gray-800">
+                ردود - {{ departmentName }}
+              </p>
+
+              <div
+                id="scroll"
+                class="h-72 overflow-y-scroll mt-4 rounded-lg py-2 border border-gray-300"
+              >
+                <div
+                  v-for="(reply, index) in replies"
+                  :key="index"
+                  :class="
+                    reply.reply.to == my_department_id
+                      ? ' flex-row-reverse justify-start'
+                      : 'justify-start'
+                  "
+                  class="w-full my-0.5 flex px-2"
+                >
+                  <div class="">
+                    <div
+                      class="flex w-full"
+                      :class="
+                        reply.reply.to == my_department_id
+                          ? '  justify-end'
+                          : 'justify-end flex-row-reverse'
+                      "
+                    >
+                      <button
+                        v-if="
+                          reply.reply.to != my_department_id &&
+                          reply.reply.userId == my_user_id &&
+                          !isdone &&
+                          !isdonetext &&
+                          !isdone2 &&
+                          !reply.canNotDeleted &&
+                          reply.reply.state
+                        "
+                        @click="
+                          (alert_delete_document = true),
+                            (reply_id_to_delete = reply.reply.replyId)
+                        "
+                        type="button"
+                        class="hover:bg-red-500 duration-500 p-1 rounded-full focus:outline-none ml-2"
+                      >
+                        <svg
+                          class="w-4 h-4 stroke-current text-red mx-auto"
+                          width="24"
+                          height="25"
+                          viewBox="0 0 24 25"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M3 6.5H5H21"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M8 6.5V4.5C8 3.96957 8.21071 3.46086 8.58579 3.08579C8.96086 2.71071 9.46957 2.5 10 2.5H14C14.5304 2.5 15.0391 2.71071 15.4142 3.08579C15.7893 3.46086 16 3.96957 16 4.5V6.5M19 6.5V20.5C19 21.0304 18.7893 21.5391 18.4142 21.9142C18.0391 22.2893 17.5304 22.5 17 22.5H7C6.46957 22.5 5.96086 22.2893 5.58579 21.9142C5.21071 21.5391 5 21.0304 5 20.5V6.5H19Z"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </button>
+
+                      <button
+                        v-if="
+                          reply.reply.to == my_department_id &&
+                          reply.resources &&
+                          senders.length > 1
+                        "
+                        @click="
+                          (reply_id_to_delete = reply.reply.replyId),
+                            get_department_for_reply(),
+                            GetResources_ById_resend2(reply.reply.replyId);
+                          show_resend = true;
+                        "
+                        type="button"
+                        class="hover:bg-blue-500 duration-500 p-1 rounded-full focus:outline-none ml-2"
+                        title="إعادة توجيه مستندات الرد"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-4 h-4 stroke-current text-red mx-auto"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                          />
+                        </svg>
+                      </button>
+
+                      <div
+                        v-if="alert_delete_document"
+                        class="w-screen h-full flex justify-center items-center absolute inset-0 z-50 overflow-hidden bg-black bg-opacity-70"
+                      >
+                        <div
+                          class="bg-yellow-100 rounded-md w-1/3 py-10 flex flex-col justify-center items-center"
+                        >
+                          <div class="">
+                            <svg
+                              class="w-20 h-20 stroke-current text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                              ></path>
+                            </svg>
+                          </div>
+                          <p class="text-xl font-bold mt-4">
+                            هل انت متأكد من عملية الحذف؟
+                          </p>
+                          <p class="text-gray-600">
+                            لن تتمكن من استرداد الرد بعد حذفه.
+                          </p>
+
+                          <div class="mt-6">
+                            <button
+                              @click="deletereply()"
+                              class="bg-red-600 hover:bg-red-700 hover:shadow-lg duration-200 rounded text-white w-32 py-1 ml-2"
+                            >
+                              نعم متأكد
+                            </button>
+                            <button
+                              @click="alert_delete_document = false"
+                              class="bg-gray-400 hover:bg-gray-700 hover:shadow-lg duration-200 rounded text-white w-32 py-1 mr-2"
+                            >
+                              إلغاء
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div v-if="reply.resources == true" class="mx-2">
+                        <button
+                          v-if="roles.includes('ggg')"
+                          @click="GetResources_ById2(reply.reply.replyId)"
+                          class="px-2 text-xs rounded leading-9 text-white bg-red-400 flex items-center w-28"
+                        >
+                          عرض الصور
+                          <svg
+                            class="stroke-current mr-2 w-6 h-6"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z"
+                              stroke-width="1"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M8.5 10C9.32843 10 10 9.32843 10 8.5C10 7.67157 9.32843 7 8.5 7C7.67157 7 7 7.67157 7 8.5C7 9.32843 7.67157 10 8.5 10Z"
+                              stroke-width="1"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M21 15L16 10L5 21"
+                              stroke-width="1"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <div
+                        v-if="reply.reply.state"
+                        :class="
+                          reply.reply.to == my_department_id
+                            ? 'bg-gray-700'
+                            : 'bg-blue-700'
+                        "
+                        class="text-white w-8/12 whitespace-normal break-words py-0 leading-9 px-2 rounded"
+                      >
+                        {{ reply.reply.mail_detail }}
+                      </div>
+
+                      <div
+                        v-else
+                        class="text-black flex py-0 leading-9 px-2 rounded bg-red-300"
+                      >
+                        هذا الرد تم حذفه
+
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="stroke-current mt-2 mr-2 w-5 h-5"
+                          width="24"
+                          height="24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div
+                      class="mt-1 text-sm"
+                      :class="
+                        reply.reply.to == my_department_id
+                          ? 'text-left'
+                          : 'text-right'
+                      "
+                    >
+                      {{ reply.reply.date }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-if="alert_done"
+                class="w-screen h-full flex justify-center items-center absolute inset-0 z-50 overflow-hidden bg-black bg-opacity-70"
+              >
+                <div
+                  class="bg-yellow-100 rounded-md w-1/3 py-10 flex flex-col justify-center items-center"
+                >
+                  <div class="">
+                    <svg
+                      class="w-20 h-20 stroke-current text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <p class="text-xl font-bold mt-4">
+                    هل انت متأكد من تأكيد الإنجاز؟
+                  </p>
+                  <p class="text-gray-600">
+                    لن تتمكن من إلغاء الإنجاز بعد التأكيد.
+                  </p>
+
+                  <div class="mt-6">
+                    <button
+                      @click="isdone22()"
+                      class="bg-red-600 hover:bg-red-700 hover:shadow-lg duration-200 rounded text-white w-32 py-1 ml-2"
+                    >
+                      نعم متأكد
+                    </button>
+                    <button
+                      @click="
+                        (alert_done = false),
+                          (isdone = false),
+                          (isdone2 = false)
+                      "
+                      class="bg-gray-400 hover:bg-gray-700 hover:shadow-lg duration-200 rounded text-white w-32 py-1 mr-2"
+                    >
+                      إلغاء
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-if="roles.includes('sr')"
+                class="sm:justify-between sm:items-center mt-4 sm:flex"
+              >
+                <div class="w-7/12 sm:flex sm:justify-between">
+                  <div
+                    class="w-5/12 mt-2"
+                    v-if="!isdone && !isdonetext && !isdone2"
+                  >
+                    <textarea
+                      id=""
+                      class="block w-full h-20 text-sm rounded-md border border-gray-200 hover:shadow-sm focus:outline-none focus:border-gray-300 p-2"
+                      v-model="reply_to_add"
+                      spellcheck="true"
+                      lang="ar"
+                    >
+                    </textarea>
+                  </div>
+
+                  <div
+                    v-if="reply_to_add != '' && !isdone2"
+                    class="sm:w-6/12 sm:mr-2 sm:flex mt-2"
+                  >
+                    <div class="sm:mr-4" >
+                      <!-- زر اختيار الملفات -->
+                      <label
+                        for="fileInput"
+                        class="inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded cursor-pointer hover:bg-gray-300"
+                      >
+                        اختر الملفات (صور أو PDF)
+                      </label>
+
+                      <!-- input مخفي -->
+                      <input
+                        type="file"
+                        id="fileInput"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        multiple
+                        ref="try_fileinput"
+                        @change="try_handleFilesChange"
+                        class="hidden"
+                      />
+
+                      <!-- زر الرفع -->
+                      <button
+                        v-if="try_selectedFiles.length && !isUploading"
+                        @click="try_upload"
+                        class="bg-blue-700 hover:bg-blue-600 w-64 text-white font-bold py-2 mt-2"
+                      >
+                        رفع الملفات
+                      </button>
+
+                      <!-- أثناء الرفع -->
+                      <div
+                        v-if="isUploading"
+                        class="mt-2 text-sm text-blue-600"
+                      >
+                        جاري رفع الملفات ... الرجاء الانتظار
+                      </div>
+
+                      <!-- عرض عدد الملفات -->
+                      <div
+                        v-if="try_selectedFiles.length"
+                        class="mt-2 text-sm text-gray-800"
+                      >
+                        <p>
+                          تم اختيار عدد {{ try_selectedFiles.length }} من
+                          الملفات
+                        </p>
+                      </div>
+
+                      <!-- Progress -->
+                      <div
+                        v-if="try_progress > 0"
+                        class="w-full bg-gray-200 rounded mt-2"
+                      >
+                        <div
+                          class="bg-green-500 text-xs leading-none py-1 text-center text-white rounded"
+                          :style="{ width: try_progress + '%' }"
+                        >
+                          {{ try_progress }}%
+                        </div>
+                      </div>
+
+                      <!-- رسالة -->
+                      <p v-if="try_message">{{ try_message }}</p>
+                    </div>
+
+                    <!--  <input class="hidden" type="button" @click="scanToJpg" />-->
+                 
+                    <div
+                      v-if="roles.includes('sendforsignature')"
+                      class="ml-2 h-full"
+                    >
+                      <button
+                        v-if="roles.includes('signature')"
+                        @click="GetAllDocuments_signture()"
+                        class="p-2 h-20 mt-4 md:mt-0 sm:mr-2 bg-green-700 text-green-50 rounded-md border border-green-300 hover:bg-green-800 focus:outline-none flex items-center justify-center"
+                      >
+                        اختيار صورة مهمشة
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="sm:w-3/12 sm:mr-2 sm:ml-2 mt-2">
+                    <button
+                      v-if="reply_to_add != '' && !isdone2"
+                      @click="AddReply()"
+                      class="flex items-center justify-center h-20 w-28 py-2 bg-white rounded-lg text-blue-600 tracking-wide border border-blue-600 cursor-pointer hover:text-white hover:bg-blue-600 focus:outline-none duration-300"
+                    >
+                      <span class="leading-normal">إرسال</span>
+                      <svg
+                        class="w-4 h-4 mr-2"
+                        viewBox="0 0 341 341"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g clip-path="url(#clip0)">
+                          <path
+                            d="M26.2637 181.168L382.073 33.5286C397.063 27.3081 413.997 30.0445 426.267 40.6664C438.538 51.29 443.669 67.6578 439.659 83.384L404.694 220.501L439.659 357.617C443.669 373.343 438.538 389.711 426.268 400.335C413.974 410.979 397.036 413.681 382.073 407.472L26.2637 259.833C10.0639 253.111 0.000120282 238.04 0.000120282 220.501C0.000120282 202.961 10.0639 187.89 26.2637 181.168ZM36.1681 235.966L391.977 383.605C397.96 386.087 404.456 385.039 409.354 380.798C414.252 376.558 416.22 370.279 414.619 364.001L381.321 233.42H252.927C245.791 233.42 240.007 227.636 240.007 220.5C240.007 213.364 245.791 207.579 252.927 207.579H381.32L414.619 76.9998C416.22 70.7224 414.252 64.4434 409.354 60.203C404.457 55.9627 397.963 54.9136 391.978 57.396L36.1681 205.035C26.5859 209.011 25.8408 217.878 25.8408 220.501C25.8408 223.123 26.5859 231.99 36.1681 235.966Z"
+                            fill="currentColor"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0">
+                            <rect
+                              width="341"
+                              height="341"
+                              fill="white"
+                              transform="matrix(-1 0 0 1 341 0)"
+                            />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+           
+            
+               
+                
+              </div>
+            </section>
+
+            <!-- إعادة توجيه الرد -->
+          </main>
+
+          <section
+            v-if="
+              show_resend &&
+              ((resend_for_done == 0 &&
+                departmentName &&
+                roles.includes('fff')) ||
+                (resend_for_done != my_department_id &&
+                  departmentName &&
+                  roles.includes('fff')) ||
+                (resend_for_done == my_department_id &&
+                  departmentName &&
+                  roles.includes('fff') &&
+                  departmentflag > 1))
+            "
+            ref="mySection"
+          >
+            <div
+              class="absolute z-10 pointer-events-none flex justify-center items-center"
+              style="
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-30deg);
+              "
+            >
+              <span
+                class="text-6xl font-bold text-gray-400 opacity-20 select-none"
+              >
+                {{ user_name33 }}
+              </span>
+            </div>
+
+            <div class="flex flex-col items-center mb-8 bg-gray-50 p-6">
+              <h1 class="mt-4 justify-self-start text-xl">
+                إعادة توجيه المستندات
+              </h1>
+              <!-- مربع الصور -->
+              <div
+                class="w-full max-w-3xl bg-white p-4 rounded-xl shadow-md text-center mt-4"
+              >
+                <!-- اختيار الصور -->
+                <div class="flex items-center justify-between mb-2">
+                  <label class="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="selectAll"
+                      @change="toggleSelectAll"
+                    />
+                    <span>تحديد الكل</span>
+                  </label>
+                  <label class="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="selectedImages_resend"
+                      :value="currentImage"
+                    />
+                    <span>تحديد الصورة</span>
+                  </label>
+                </div>
+
+                <!-- عرض الصورة -->
+                <div
+                  v-if="currentImage != null"
+                  class="flex justify-center items-center"
+                >
+                  <template v-if="isPdfFile(currentImage.path)">
+                    <iframe
+                      :src="currentImage.path"
+                      class="w-full h-screen border-0"
+                    ></iframe>
+                  </template>
+
+                  <!-- صورة واحدة أو عدة صور -->
+                  <template v-else>
+                    <img
+                      :src="currentImage.path"
+                      :alt="'Image ' + currentImage.id"
+                      :style="{
+                        objectFit: 'contain',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+
+                        transition: 'transform 0.2s ease',
+                      }"
+                    />
+                  </template>
+                </div>
+                <!-- التحكم في التكبير/التصغير -->
+                <div class="flex justify-center gap-3 mt-2">
+                  <button
+                    @click="zoomIn"
+                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 z-10"
+                  >
+                    +
+                  </button>
+                  <button
+                    @click="zoomOut"
+                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 z-10"
+                  >
+                    -
+                  </button>
+                  <button
+                    @click="resetZoom"
+                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 z-10"
+                  >
+                    إعادة
+                  </button>
+                </div>
+
+                <!-- العداد + السابق/التالي -->
+                <div
+                  class="flex justify-center items-center gap-3 mt-2 text-sm"
+                >
+                  <button
+                    @click="prevImage_resend"
+                    class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    السابق
+                  </button>
+
+                  <span
+                    >{{ currentIndex + 1 }} /
+                    {{ reply_total_of_doc_resend }}</span
+                  >
+
+                  <button
+                    @click="nextImage_resend"
+                    class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    التالي
+                  </button>
+                </div>
+              </div>
+
+              <!-- الحقول -->
+              <div
+                class="w-full max-w-xl bg-white mt-6 p-6 rounded-xl shadow-md"
+              >
+                <!-- اختيار المستلم -->
+                <div class="mb-4">
+                  <label class="block text-gray-700 mb-2">اختر المستلم</label>
+                  <select
+                    v-model="selectedRecipient"
+                    class="w-full border border-gray-300 rounded-lg p-2"
+                  >
+                    <option
+                      v-for="recipient in recipients"
+                      :key="recipient.id"
+                      :value="recipient"
+                    >
+                      {{ recipient.departmentName }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- النص -->
+                <div class="mb-4">
+                  <label class="block text-gray-700 mb-2">النص</label>
+                  <textarea
+                    v-model="message"
+                    spellcheck="true"
+                    lang="ar"
+                    rows="4"
+                    class="w-full border border-gray-300 rounded-lg p-2"
+                  ></textarea>
+                </div>
+
+                <!-- زر الارسال -->
+                <div class="text-center flex justify-center">
+                  <button
+                    @click="send"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-2"
+                  >
+                    ارسال
+                  </button>
+
+                  <button
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mr-2"
+                    @click="back_resend()"
+                  >
+                    <span class="text-sm font-bold block ml-1"
+                      >إغلاق النافذة</span
+                    >
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="screenFreeze"
+      class="w-screen h-screen bg-black bg-opacity-30 absolute inset-0 z-50 flex justify-center items-center"
+    >
+      <div v-if="loading" class="">
+        <svgLoadingComponent></svgLoadingComponent>
+      </div>
+
+      <div
+        v-if="there_are_no_documents"
+        class="bg-white w-96 h-32 flex justify-center items-center"
+      >
+        لا توجد مستندات لهذا البريد.
+      </div>
+    </div>
+
+    <div
+      v-if="show_images_model"
+      class="w-screen h-full fixed inset-0 z-50 overflow-hidden"
+    >
+      <div class="relative z-50">
+        <div
+          v-if="to_test_print"
+          id="printMe"
+          class="bg-black bg-opacity-50 h-screen-100"
+        >
+          <div
+            v-for="image in show_images"
+            :key="image.id"
+            class="h-screen-100"
+          >
+            <template v-if="isPdfFile(image.url)">
+              <iframe
+                :src="image.url"
+                class="w-full h-screen border-0"
+              ></iframe>
+            </template>
+
+            <!-- صورة واحدة أو عدة صور -->
+            <template v-else>
+              <img
+                :src="image.url"
+                :alt="'Image ' + image.id"
+                :style="{
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+
+                  transition: 'transform 0.2s ease',
+                }"
+              />
+            </template>
+          </div>
+        </div>
+
+        <div
+          v-if="to_test_print"
+          id="print_one_dec"
+          class="bg-black bg-opacity-50 h-screen-100"
+        >
+          <div class="h-screen-100">
+            <!-- <img :src="testimage" alt="" class="h-full w-full object-contain" /> -->
+
+            <template v-if="isPdfFile(testimage)">
+              <iframe
+                :src="testimage"
+                class="w-full h-screen border-0"
+              ></iframe>
+            </template>
+
+            <!-- صورة واحدة أو عدة صور -->
+            <template v-else>
+              <img
+                :src="testimage"
+                :alt="'Image '"
+                :style="{
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+
+                  transition: 'transform 0.2s ease',
+                }"
+              />
+            </template>
+          </div>
+        </div>
+
+        <div
+          class="h-screen flex flex-col justify-center items-center bg-black bg-opacity-90 absolute top-0 inset-0 z-50 w-full"
+        >
+          <button
+            v-if="!isPdfFile(testimage)"
+            type="button"
+            @click="image_rotate = !image_rotate"
+            class="absolute text-white font-bold px-8 z-50 bg-yellow-500 py-2 right-12"
+          >
+            تدوير الصفحة
+          </button>
+
+          <button
+            v-if="roles.includes('signature') && !isPdfFile(testimage)"
+            type="button"
+            @click="signeture(testimage, current_page_number, 1)"
+            class="absolute text-white font-bold px-8 z-50 bg-yellow-500 py-2 left-12"
+          >
+            التوقيع
+          </button>
+
+          <button
+            v-if="roles.includes('signature') && isPdfFile(testimage)"
+            type="button"
+            @click="openSwalPrompt(testimage, 2)"
+            class="absolute text-white font-bold px-8 z-50 bg-yellow-500 py-2 left-12"
+          >
+            التوقيع
+          </button>
+
+          <div class="w-full mx-auto relative mb-4">
+            <div
+              class="absolute top-6 z-50 flex justify-center items-center w-full"
+            >
+              <button @click="show_images_model = false">
+                <svg
+                  class="w-8 h-8 ml-16 stroke-current text-red-500 hover:text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </button>
+
+      
+              <button
+                v-if="
+                  isPdfFile(testimage) &&
+                  roles.includes('kkk') &&
+                  measure_id_for_photo != 1
+                "
+                @click="printPdf(testimage)"
+                class="bg-blue-500 ml-16 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
+              >
+                طباعة المستند الحالي
+              </button>
+
+              <button
+                v-else-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                @click="print_image()"
+                v-print="'#print_one_dec'"
+                class="bg-blue-500 ml-16 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
+              >
+                طباعة المستند الحالي
+              </button>
+
+              <button
+                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                @click="MergeAndDownload(p_id, p_uid, p_did, p_mydep)"
+                v-print="'#printMe'"
+                class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
+              >
+                طباعة كافة المستندات
+              </button>
+            </div>
+
+            <div class="h-screen-93 mt-4 w-full">
+              <div class="h-screen-93 mt-4 relative w-full">
+                <template class="w-full" v-if="isPdfFile(testimage)">
+                  <iframe
+                    :src="testimage"
+                    class="w-full h-screen border-0 object-contain"
+                  ></iframe>
+                </template>
+
+                <!-- صورة واحدة أو عدة صور -->
+                <template class="w-full" v-else>
+                  <img
+                    :class="image_rotate ? 'rotate-0' : 'rotate-180'"
+                    class="h-full w-full object-contain transform z-0"
+                    :src="testimage"
+                    :alt="'Image '"
+                  />
+                </template>
+
+                <div
+                  class="absolute z-10 pointer-events-none flex justify-center items-center"
+                  style="
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(-30deg);
+                  "
+                >
+                  <span
+                    class="text-6xl font-bold text-gray-400 opacity-20 select-none"
+                  >
+                    {{ user_name33 }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- <img :src="testimage" alt="image" class="h-full w-full object-contain" /> -->
+            </div>
+
+            <div
+              class="fixed bottom-10 z-50 bg-gray-100 flex justify-between items-center w-64 justify-self-center mx-auto mt-4"
+            >
+              <div class="w-12 h-8">
+                <button
+                  title="prev"
+                  @click="previousImage()"
+                  class="focus:outline-none z-50 w-12 h-8 bg-gray-300 rounded flex justify-center items-center"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="text-black">
+                {{ indextotest + 1 }} / {{ show_images.length }}
+              </div>
+
+              <div class="w-12 h-8">
+                <button
+                  title="next"
+                  @click="nextImage()"
+                  class="focus:outline-none z-50 w-12 h-8 bg-gray-300 rounded flex justify-center items-center"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- w-full h-full rounded object-contain -->
+    </div>
+
+    <div
+      v-if="show_current_reply_image_to_for_bigger_screen_model"
+      class="w-screen h-full fixed inset-0 z-50 overflow-hidden"
+    >
+      <div
+        class="relative h-screen w-screen bg-black bg-opacity-90 flex justify-center items-center"
+      >
+        <!-- عرض الصورة أو PDF -->
+        <div
+          id="print_reply_doc_n"
+          class="w-full h-full flex justify-center items-center"
+        >
+          <!-- PDF -->
+          <template v-if="isPdfFile(currentFile)">
+            <iframe :src="currentFile" class="w-full h-full border-0"></iframe>
+          </template>
+
+          <!-- صورة واحدة أو عدة صور -->
+          <template v-else>
+            <img
+              :src="currentFile"
+              alt="document"
+              class="w-full h-full object-contain"
+            />
+          </template>
+
+          <div
+            class="absolute z-10 pointer-events-none flex justify-center items-center"
+            style="
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%) rotate(-30deg);
+            "
+          >
+            <span
+              class="text-6xl font-bold text-gray-400 opacity-20 select-none"
+            >
+              {{ user_name33 }}
+            </span>
+          </div>
+        </div>
+
+        <!-- شريط الأدوات العلوي -->
+        <div
+          class="absolute top-4 left-0 right-0 flex justify-between items-center px-6 z-50"
+        >
+          <button
+            @click="show_current_reply_image_to_for_bigger_screen_model = false"
+          >
+            <svg
+              class="w-8 h-8 stroke-current text-red-500 hover:text-red-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </button>
+          <!-- طباعة -->
+          <button
+            v-if="isPdfFile(currentFile)"
+            @click="printPdf(currentFile)"
+            class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
+          >
+            طباعة المستند الحالي
+          </button>
+
+          <button
+            v-else
+            v-print="'#print_reply_doc_n'"
+            @click="print_image()"
+            class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
+          >
+            طباعة المستند الحالي
+          </button>
+        </div>
+
+        <!-- شريط التنقل السفلي -->
+        <div
+          class="fixed bottom-10 left-0 right-0 bg-gray-100 flex justify-between items-center w-full max-w-4xl mx-auto px-4 py-2 rounded-lg shadow z-50"
+          v-if="isImageArray(reply_image_of_doc)"
+        >
+          <div class="w-12 h-8">
+            <button
+              title="السابق"
+              v-if="currentIndex > 0"
+              @click="prevImage1()"
+              class="focus:outline-none w-12 h-8 bg-gray-300 rounded flex justify-center items-center"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                ></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="text-black font-semibold">
+            {{ currentIndex + 1 }} / {{ reply_image_of_doc.length }}
+          </div>
+
+          <div class="w-12 h-8">
+            <button
+              title="التالي"
+              v-if="currentIndex < reply_image_of_doc.length - 1"
+              @click="nextImage1()"
+              class="focus:outline-none w-12 h-8 bg-gray-300 rounded flex justify-center items-center"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="showAnnotatedModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
+    >
+      <button
+        @click="showAnnotatedModal = false"
+        class="absolute top-5 right-5 text-white text-4xl cursor-pointer hover:text-red-500 z-[60]"
+      >
+        &times;
+      </button>
+
+      <button
+        @click="save_selected_images"
+        class="absolute top-5 left-5 text-white text-4xl cursor-pointer hover:text-red-500 z-[60]"
+      >
+        حفظ
+      </button>
+
+      <div
+        v-if="currentImagesig"
+        class="relative flex flex-col max-w-full max-h-full items-center"
+      >
+        <div class="w-full flex justify-between items-center mb-2 px-1">
+          <label
+            class="flex items-center text-white cursor-pointer bg-white/10 px-2 py-1 rounded"
+          >
+            <input
+              type="checkbox"
+              v-model="selectAllsig"
+              @change="toggleSelectAllsig"
+            />
+            <span class="mr-2 text-sm">تحديد الكل</span>
+          </label>
+          <label
+            class="flex items-center text-white cursor-pointer bg-white/10 px-2 py-1 rounded"
+          >
+            <input
+              type="checkbox"
+              v-model="selectedImages_sig"
+              :value="currentImagesig"
+            />
+            <span class="mr-2 text-sm">تحديد الصورة</span>
+          </label>
+        </div>
+
+        <div class="relative bg-white p-1 rounded-lg">
+          <img
+            :src="currentImagesig.path"
+            class="block mx-auto object-contain"
+            style="max-width: 90vw; max-height: calc(100vh - 180px)"
+          />
+
+          <div
+            class="absolute inset-0 flex justify-center items-center pointer-events-none opacity-10"
+          >
+            <span
+              class="text-5xl md:text-8xl font-bold text-gray-500 transform -rotate-45 select-none uppercase"
+            >
+              {{ user_name33 }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex justify-center items-center gap-4 mt-4 w-full">
+          <button
+            @click="prevImage_sig"
+            class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-white transition-all text-sm font-bold"
+          >
+            السابق
+          </button>
+          <span
+            class="text-white text-sm font-mono bg-black/50 px-3 py-1 rounded-full"
+          >
+            {{ currentIndexsig + 1 }} / {{ reply_total_of_doc_sig }}
+          </span>
+          <button
+            @click="nextImage_sig"
+            class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-white transition-all text-sm font-bold"
+          >
+            التالي
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script
+  type="text/javascript"
+  src="http://cdn.asprise.com/scannerjs/scanner.js"
+></script>
+
+<script>
+import asideComponent from "@/components/asideComponent.vue";
+import navComponent from "@/components/navComponent.vue";
+import svgLoadingComponent from "@/components/svgLoadingComponent.vue";
+import { ensureAccessToken } from "@/services/tokenHelper";
+import Swal from "sweetalert2";
+//import { HubConnectionBuilder } from "@microsoft/signalr";
+
+export default {
+  created() {},
+
+  destroyed() {
+    console.log("destroyed_inbox.vue");
+    if (this.conn != null) {
+      if (this.conn.readystate != 3) {
+        console.log("readystate destory_inbox.vue=" + this.conn.readyState);
+        this.conn.close();
+        console.log("close_inbox.vue");
+        this.conn = null;
+      }
+    }
+  },
+  async mounted() {
+    window.addEventListener("resize", this.handleResize);
+
+    //this.GetAllDocumentsAndRepliestest(),
+    //21/1/2023*********************websocket
+    /*  this.conn = new WebSocket("ws://localhost:58316/ws");
+
+this.conn.onerror =(error) =>{
+console.log("inbox WebSocket Error " + error);
+};
+
+this.conn.onclose =(event) =>{
+console.log("inbox.vue readystate"+this.conn.readyState);
+console.log(" inbox.vue WebSocket close");
+consol.log("code inbox.vue="+event.code);
+
+};
+    this.conn.onmessage = (event) => {
+      console.log("inbox onmessage");
+      let scannedImage = event.data;
+      let mgs = JSON.parse(scannedImage);
+      this.imagesscantest = mgs;
+
+      var ind = this.imagesscantest.index;
+       console.log("inbox index="+ind);
+      if (ind == 1) {
+        this.keyid = this.imagesscantest.keyid;
+        console.log("inbox keyid="+this.keyid);
+      } else {
+         console.log("inbox.vue else");
+        //this.imagesToSend=[]
+        for (var i = 0; i < mgs["image"].length; i++) {
+          this.indexOfimagesToShow++;
+
+          this.imagesToSend.push({
+            baseAs64: mgs["image"][i],
+            index: this.indexOfimagesToShow,
+          });
+        }
+      }
+    };*/
+
+    //*********************end websocket 21/1/2023
+
+    this.user_name33 = localStorage.getItem("user_name");
+    this.roles = localStorage.getItem("Az07");
+    if (
+      localStorage.getItem("AY_LW") == null ||
+      localStorage.getItem("AY_LW") == true ||
+      !this.roles.includes("nnn")
+    ) {
+      this.$router.push("/");
+    }
+
+    this.isperent = localStorage.getItem("isperent");
+
+    this.perent_id = localStorage.getItem("perent_id");
+    this.perent_name = localStorage.getItem("perent_name");
+
+    var date = new Date();
+
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+
+    var month1 = "01";
+    var day1 = "01";
+
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+
+    this.date_from = date.getFullYear() + "-" + month1 + "-" + day1;
+    this.date_to = date.getFullYear() + "-" + month + "-" + day;
+
+    this.my_user_id = localStorage.getItem("AY_LW");
+    this.my_department_id = localStorage.getItem("chrome");
+
+    await this.GetInboxs();
+
+    // this.GetAllmail_cases();
+    // this.GetAllClassifications();
+    // this.GetAllDepartments();
+    // this.GetAllMembers();
+    // this.GetAllSides();
+    // this.GetAllMeasures();
+  },
+
+  computed: {
+    filterByTerm_section() {
+      return this.sides.filter((side) => {
+        return side.section_Name.toLowerCase().includes(this.sideNameSelected);
+      });
+    },
+
+    currentImage() {
+      return this.images_resend[this.currentIndex] || null;
+    },
+
+    currentImagesig() {
+      return this.signture_images[this.currentIndexsig] || null;
+    },
+
+    currentFile() {
+      // إذا PDF واحد
+      if (
+        typeof this.reply_image_of_doc === "string" &&
+        this.isPdfFile(this.reply_image_of_doc)
+      ) {
+        return this.reply_image_of_doc;
+      }
+      // إذا مصفوفة صور
+      if (
+        Array.isArray(this.reply_image_of_doc) &&
+        this.reply_image_of_doc.length > 0
+      ) {
+        return this.reply_image_of_doc[this.currentIndex].path;
+      }
+      // صورة واحدة
+      return this.reply_image_of_doc;
+    },
+
+    filterByTerm() {
+      return this.departments.filter((department) => {
+        return department.departmentName.includes(this.departmentNameSelected);
+      });
+    },
+
+    filterByTerm4() {
+      return this.members.filter((member) => {
+        return member.userName.includes(this.memberNameSelected);
+      });
+    },
+  },
+
+  watch: {
+
+    don_state: function () {
+      if (this.don_state == 1) {
+        this.done_mails = true;
+        this.not_done = false;
+      } else if (this.don_state == 2) {
+        this.done_mails = false;
+        this.not_done = true;
+      } else {
+        this.done_mails = false;
+        this.not_done = false;
+      }
+    },
+
+    selectedImages_resend() {
+      if (this.selectedImages_resend.length == this.reply_total_of_doc_resend) {
+        this.selectAll = true;
+      } else {
+        this.selectAll = false;
+      }
+    },
+
+    selectedImages_sig() {
+      if (this.selectedImages_sig.length == this.reply_total_of_doc_sig) {
+        this.selectAllsig = true;
+      } else {
+        this.selectAllsig = false;
+      }
+    },
+
+    show_resend(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          this.$refs.mySection.scrollIntoView({ behavior: "smooth" });
+        });
+      }
+    },
+
+    new_reply: function () {
+      this.page_num = 1;
+      this.search_reset();
+      this.GetInboxs();
+    },
+
+    // done_mails: function () {
+    //   if (this.done_mails == true) {
+    //     this.not_done = false;
+    //   }
+
+    //   this.GetInboxs(), (this.filter = false);
+    // },
+
+    // not_done: function () {
+    //   if (this.not_done == true) {
+    //     this.done_mails = false;
+    //   }
+
+    //   this.GetInboxs(), (this.filter = false);
+    // },
+
+    // isdone: function () {
+
+    //   if (!isdone){
+
+    //       isdonetext=true;
+    //   }
+    //   isdonetext=false;
+    // },
+    //****
+    // year_filter: function() {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    mailType: function () {
+      this.page_num = 1;
+      this.GetInboxs();
+    },
+    //************code stop 1/2/2024
+    departmentNameSelected: function () {
+      //  if(this.departmentNameSelected==""){
+      // this.page_num = 1;
+      //  this.GetInboxs();
+      //  }
+      // },
+
+      if (this.departmentNameSelected == "") {
+        this.page_num = 1;
+        this.GetInboxs();
+      }
+    },
+
+    mailType: function () {
+      this.page_num = 1;
+      this.GetInboxs();
+    },
+
+    // date_from: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // date_to: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+
+    // mail_id: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+
+    // general_incoming_number: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+
+    // summary: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // departmentIdSelected: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // sideIdSelected: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // measureIdSelected: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // classificationIdSelected: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+
+    // mail_caseIdSelected: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+    // by_date_of_reply: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+
+    // s_number: function () {
+    //   this.page_num = 1;
+    //   this.GetInboxs();
+    // },
+  },
+
+  components: {
+    asideComponent,
+    navComponent,
+    svgLoadingComponent,
+  },
+
+  data() {
+    return {
+
+
+
+      don_state:3,
+      
+      current_page_number: 1,
+
+      showAnnotatedModal: false,
+      // الصور القادمة من السيرفر
+      selectedImages: [], // الصور التي اختارها المستخدم حالياً
+      finalAttachments: [], // القائمة النهائية التي ستُرسل مع المحادثة
+
+      departmentName55: "",
+      departmentflag55: "",
+
+      memberMailDate: "",
+      memberMailIsDone: "",
+
+      p_id: 0,
+      p_uid: 0,
+      p_did: 0,
+      p_mydep: 0,
+
+      member_done: "2",
+      menuOpen: true,
+
+      shared: "",
+      user_name33: "",
+
+      show_number: false,
+      show_resend: false,
+
+      selectedRecipient: null,
+
+      images_resend: [],
+      currentIndex: 0,
+      selectedImages_resend: [],
+      selectAll: true,
+
+      images_sig: [],
+      currentIndexsig: 0,
+      selectedImages_sig: [],
+      selectAllsig: false,
+
+      message: "",
+
+      zoom: 1,
+      recipients: [],
+
+      reply_total_of_doc_resend: 0,
+
+      reply_total_of_doc_sig: 0,
+
+      imagesToSend_resend: [],
+
+      reply_id_for_resend: 0,
+
+      ////////////////////////////
+
+      sends_from_to_reply: 0,
+
+      reply_flag: 0,
+
+      done_alert: "تم إنجاز البريد",
+
+      new_reply: false,
+
+      measure_id_for_photo: 0,
+
+      member_id: 0,
+
+      measure_id1: "",
+
+      resend_for_done: 0,
+
+      department_Id_done: "",
+
+      done_mails: false,
+      not_done: false,
+
+      alert_done: false,
+
+      sends_id22: 0,
+
+      perent_id: 0,
+      perent_name: "",
+
+      isperent: false,
+
+      sends_for_sig: 0,
+
+      sender2: [],
+      departmentName: "",
+      redirection: false,
+
+      isdone: false,
+      isdone2: false,
+      isdonetext: false,
+
+      image_rotate: true,
+
+      baseText: "تم التراجع عن تأكيد الإنجاز بسبب ",
+      cancel_reason2: "تم التراجع عن تأكيد الإنجاز بسبب ",
+
+      //*********21/1/2023
+      keyid: "",
+      conn: null,
+      //**********end 21/1/2023
+
+      s_number: "",
+      reply_id_to_delete: "",
+      alert_delete_document: false,
+      roles: [],
+      from_reply_or_general: "",
+      year_filter: 0,
+      sig_filter: 3,
+
+      cont_state: 4,
+      by_date_of_reply: false,
+      general_incoming_number: "",
+      indexOfimagesToShow: 0,
+      imagesToSend: [],
+      replies: [],
+      to_test_print: false,
+      sends_id: "",
+      department_Id: "",
+
+      reply_to_add: "",
+
+      testimage: "",
+      indextotest: 0,
+
+      show_images: [],
+      show_images_model: false,
+
+      total_of_transaction: 0,
+      my_user_id: "",
+      my_department_id: "",
+
+      inboxMails: [],
+
+      mail_id: "",
+
+      classifications: [],
+      classificationselect: false,
+      classificationNameSelected: "",
+      classificationIdSelected: "",
+
+      departments: [],
+      departmentselect: false,
+      departmentNameSelected: "",
+      departmentIdSelected: "",
+
+      resend_from_to_show: "",
+
+      realated_departments: [],
+      realated_departmentselect: false,
+      realated_departmentNameSelected: "",
+      realated_departmentIdSelected: "",
+
+      members: [],
+      memberselect: false,
+      memberNameSelected: "",
+      memberIdSelected: "",
+
+      sides: [],
+      sideselect: false,
+      sideNameSelected: "",
+      sideIdSelected: "",
+
+      measures: [],
+      measureselect: false,
+      measureNameSelected: "",
+      measureIdSelected: "",
+
+      mail_cases: [],
+      mail_caseselect: false,
+      mail_caseNameSelected: "",
+      mail_caseIdSelected: "",
+
+      mailType: 0,
+
+      summary: "",
+
+      filter: false,
+      loading: false,
+      screenFreeze: false,
+      there_are_no_documents: false,
+
+      date_from: "",
+      date_to: "",
+
+      page_size: 10,
+      page_size2: 1000000000,
+      page_num: 1,
+
+      mailId_to_get_mail_by_id: "",
+      my_department_id_to_get_mail_by_id: "",
+      to_test_passing_mail_type_to_get_mail_by_id: "",
+      sends_id_to_get_mail_by_id: "",
+      mangment_sender_to_get_mail_by_id: "",
+
+      mails_to_print: [],
+
+      reply_doc_number: 0,
+      reply_total_of_doc: 0,
+
+      reply_image_of_doc: "",
+      reply_id_of_doc: "",
+      reply_image_to_print_n: [],
+
+      reply_image_to_print_n_model: false,
+      show_current_reply_image_to_for_bigger_screen_model: false,
+
+      id_reply_image: "",
+      departmentflag: 0,
+      show_senders_mail: "",
+      senders: [],
+
+      sends_id: "",
+
+      mail_sub_number: false,
+      sub_number: "",
+      sub_id: 0,
+
+      isUploading: false,
+      try_progress: 0,
+      try_selectedFiles: [],
+      try_message: "",
+      try_mail_id: "",
+      try_userId: localStorage.getItem("AY_LW"),
+      user_department: localStorage.getItem("chrome"),
+
+      signture_images: [],
+    };
+  },
+
+  beforeDestroy() {
+    // أو beforeUnmount في Vue 3
+    window.removeEventListener("resize", this.handleResize);
+  },
+
+  methods: {
+    openSwalPrompt(testimage, n) {
+      Swal.fire({
+        title: "  PDF إختيار صورة من ال ",
+        text: "يرجى إدخال رقم الصفحة المراد التوقيع عليها",
+        input: "number", // نوع الإدخال رقم
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        showCancelButton: true,
+        confirmButtonText: "تأكيد",
+        cancelButtonText: "إلغاء",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        reverseButtons: true, // لترتيب الأزرار بشكل صحيح في العربية
+        inputPlaceholder: "أدخل الرقم هنا...",
+
+        // التحقق من الإدخال
+        inputValidator: (value) => {
+          if (!value) {
+            return "يجب عليك إدخال رقم للمتابعة!";
+          }
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // هنا الرقم الذي أدخله المستخدم
+
+          // يمكنك الآن استخدامه في المنظومة
+
+          this.signeture(testimage, result.value, 2);
+        }
+      });
+    },
+    //             async GetSpecificPageAsImage(path,num) {
+
+    //       this.$http.documentService
+    //         .GetSpecificPageAsImage(path,num)
+    //         .then((res) => {
+
+    //  // this.testimage=
+
+    //                this.signeture(res.data,2)
+
+    //           setTimeout(() => {}, 200);
+    //         })
+    //         .catch((err) => {
+    //           console.log(err);
+    //         });
+    //     },
+
+    async GetAllDocuments_signture() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+      this.signture_images = [];
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.mailService
+        .GetAllDocuments_signture(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(localStorage.getItem("AY_LW")),
+          Number(this.my_department_id),
+          1,
+        )
+        .then((res) => {
+          this.signture_images = res.data;
+          this.reply_total_of_doc_sig = this.signture_images.length;
+
+          if (this.signture_images.length == 0) {
+            alert("  لم يتم التهميش على اي صورة  ");
+          } else {
+            this.showAnnotatedModal = true;
+          }
+
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          this.loading = false;
+          alert("  لم يتم التهميش على اي صورة  ");
+          setTimeout(() => {
+            this.screenFreeze = false;
+            console.log(err);
+          }, 700);
+        });
+    },
+
+    save_selected_images() {
+      for (let index = 0; index < this.selectedImages_sig.length; index++) {
+        this.imagesToSend.push({
+          baseAs64: this.selectedImages_sig[index].path,
+          index: index + 1,
+          department_id: Number(this.my_department_id),
+        });
+      }
+
+      this.showAnnotatedModal = false;
+    },
+
+    try_handleFilesChange(event) {
+      this.try_selectedFiles = Array.from(event.target.files);
+      this.try_progress = 0;
+    },
+
+    async try_upload() {
+      if (!this.try_selectedFiles.length) {
+        this.try_message = "يرجى اختيار الصور أولاً";
+        return;
+      }
+
+      this.isUploading = true; // 👈 نوقف الزر
+
+      try {
+        const batchSize = 5; // 👈 عدد الصور في كل دفعة
+        for (let i = 0; i < this.try_selectedFiles.length; i += batchSize) {
+          const batch = this.try_selectedFiles.slice(i, i + batchSize);
+
+          // تحويل الصور في الدفعة إلى base64
+          const try_base64List = await Promise.all(
+            batch.map((file, index) => {
+              return this.try_convertToBase64(file).then((base64) => ({
+                baseAs64: base64,
+                index: i + index,
+                department_id: Number(this.user_department),
+              }));
+            }),
+          );
+
+          for (let i = 0; i < try_base64List.length; i++) {
+            this.imagesToSend.push({
+              baseAs64: try_base64List[i].baseAs64,
+              index: try_base64List[i].index,
+              department_id: Number(this.my_department_id),
+            });
+          }
+
+          // تجهيز البيانات
+          // const data = {
+          //   mail_id: Number(this.mailId),
+          //   userId: Number(this.try_userId),
+          //   list: try_base64List,
+          // };
+
+          // إرسال الطلب
+          // await this.$http.documentService.upload_doc_from_web(data);
+
+          // تحديث التقدم
+          this.try_progress = Math.round(
+            ((i + batch.length) / this.try_selectedFiles.length) * 100,
+          );
+        }
+
+        this.try_message = "تم رفع الصور بنجاح ✅";
+        this.try_selectedFiles = [];
+        this.$refs.try_fileinput.value = null;
+      } catch (err) {
+        this.try_message = "حدث خطأ أثناء رفع الصور";
+        console.error(err);
+      } finally {
+        this.isUploading = false; // 👈 نرجع الزر مهما كان
+      }
+    },
+
+    try_convertToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+    },
+
+    // جلب الصور المهمشة من السيرفر
+
+    toggleSelection(img) {
+      const index = this.selectedImages.findIndex((i) => i.id === img.id);
+      if (index > -1) {
+        this.selectedImages.splice(index, 1);
+      } else {
+        this.selectedImages.push(img);
+      }
+    },
+    isSelected(id) {
+      return this.selectedImages.some((i) => i.id === id);
+    },
+    confirmSelection() {
+      // دمج المختار مع المرفقات الحالية (سكانر أو ملفات عادية)
+      this.finalAttachments = [
+        ...this.finalAttachments,
+        ...this.selectedImages,
+      ];
+      this.showAnnotatedModal = false;
+    },
+
+    signeture(data, cpn, n) {
+      this.$router.push({
+        name: "tests",
+        params: {
+          url: data,
+          mailid: this.show_images[this.indextotest].mailID,
+          sends_for_sig: this.sends_for_sig,
+          page: "/inbox",
+
+          cpn: cpn,
+          n: n,
+        },
+      });
+    },
+    async convertPdfToImages(pdfUrl) {
+      const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+      const images = [];
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 }); // الجودة
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        // تحويل الصفحة إلى DataURL
+        images.push(canvas.toDataURL("image/png"));
+      }
+
+      return images;
+    },
+
+    isImageArray(file) {
+      return Array.isArray(file) && file.length > 0;
+    },
+
+    nextImage1() {
+      if (this.currentIndex < this.reply_image_of_doc.length - 1) {
+        this.currentIndex++;
+        console.log("dddd");
+      }
+    },
+    prevImage1() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      }
+    },
+
+    printPdf(pdfUrl) {
+      const w = window.open(pdfUrl, "_blank");
+      w.print();
+
+      this.to_test_print = true;
+      this.$http.mailService
+        .PrintOrShowDocument(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(localStorage.getItem("AY_LW")),
+          Number(this.from_reply_or_general),
+        )
+        .then((res) => {
+          setTimeout(() => {
+            console.log(res);
+            this.loading = false;
+            this.screenFreeze = false;
+          }, 500);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.loading = false;
+            this.screenFreeze = false;
+          }, 500);
+          console.log(err);
+        });
+    },
+
+    isPdfFile(file) {
+      return file && typeof file === "string" && file.endsWith(".pdf");
+    },
+
+    handleResize() {
+      this.menuOpen = window.innerWidth >= 800;
+    },
+
+    onMenuToggle(value) {
+      this.menuOpen = value; // 🔹 نستقبل القيمة هنا
+    },
+
+    ReplyReaded(dep_id, sends, sends_id) {
+      //*******
+
+      var from2 = null;
+
+      if (sends == this.my_department_id) {
+        from2 = 1;
+      } else {
+        from2 = 2;
+      }
+
+      this.$http.mailService
+        .ReplyReaded(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(this.my_department_id),
+          Number(dep_id),
+          Number(this.my_user_id),
+          from2,
+          sends_id,
+        )
+        .then((res) => {
+          setTimeout(() => {
+            this.show_senders(
+              this.mailId_to_get_mail_by_id,
+              this.to_test_passing_mail_type_to_get_mail_by_id,
+              this.show_senders_mail,
+              this.resend_from_to_show,
+              this.measure_id1,
+            );
+          }, 500);
+        })
+        .catch((err) => {
+          setTimeout(() => {}, 500);
+          console.log(err);
+        });
+    },
+
+    async GetMailSubId() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      if (this.mail_sub_number != true) {
+        this.$http.mailService
+          .GetMailSubId(
+            this.mailId_to_get_mail_by_id,
+            this.my_department_id,
+            this.my_user_id,
+          )
+          .then((res) => {
+            this.sub_number = res.data.subNumber;
+            this.sub_id = res.data.subNumberId;
+            this.show_number = true;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        this.show_number = false;
+        this.sub_number = "";
+        this.sub_id = 0;
+      }
+    },
+
+    async get_department_for_reply() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.mailService
+        .get_department_for_reply(
+          this.my_department_id_to_get_mail_by_id,
+          this.my_department_id,
+          this.mailId_to_get_mail_by_id,
+          0,
+        )
+        .then((res) => {
+          this.recipients = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    zoomIn() {
+      this.zoom += 0.1;
+    },
+    zoomOut() {
+      if (this.zoom > 0.3) this.zoom -= 0.1;
+    },
+    resetZoom() {
+      this.zoom = 1;
+    },
+
+    zoomInsig() {
+      this.zoomsig += 0.1;
+    },
+    zoomOutsig() {
+      if (this.zoomsig > 0.3) this.zoomsig -= 0.1;
+    },
+    resetZoomsig() {
+      this.zoomsig = 1;
+    },
+
+    back_resend() {
+      this.show_resend = false;
+
+      (this.selectedRecipient = null),
+        (this.images_resend = []),
+        (this.currentIndex = 0),
+        (this.selectedImages_resend = []),
+        (this.selectAll = true),
+        (this.message = ""),
+        (this.zoom = 1),
+        (this.recipients = []),
+        (this.reply_total_of_doc_resend = 0),
+        (this.imagesToSend_resend = []),
+        (this.reply_id_for_resend = 0);
+    },
+
+    async GetResources_ById_resend(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.documentService
+        .GetResources_ById_Resend(id)
+        .then((res) => {
+          (this.reply_id_for_resend = id),
+            (this.reply_total_of_doc_resend = res.data.total);
+
+          this.selectedImages_resend = res.data.date;
+
+          this.images_resend = res.data.date;
+
+          setTimeout(() => {}, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    async GetResources_ById_resend2(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.documentService
+        .GetResources_ById_Resend2(id)
+        .then((res) => {
+          (this.reply_id_for_resend = id),
+            (this.reply_total_of_doc_resend = res.data.total);
+
+          this.selectedImages_resend = res.data.date;
+
+          this.images_resend = res.data.date;
+
+          setTimeout(() => {}, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    nextImage_resend() {
+      if (this.currentIndex < this.images_resend.length - 1)
+        this.currentIndex++;
+    },
+    prevImage_resend() {
+      if (this.currentIndex > 0) this.currentIndex--;
+    },
+    toggleSelectAll() {
+      this.selectedImages_resend = this.selectAll
+        ? [...this.images_resend]
+        : [];
+    },
+
+    nextImage_sig() {
+      if (this.currentIndexsig < this.signture_images.length - 1)
+        this.currentIndexsig++;
+    },
+
+    prevImage_sig() {
+      if (this.currentIndexsig > 0) this.currentIndexsig--;
+    },
+
+    toggleSelectAllsig() {
+      this.selectedImages_sig = this.selectAllsig
+        ? [...this.signture_images]
+        : [];
+    },
+
+    async send() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      if (!this.selectedRecipient) {
+        alert("الرجاء اختيار مستلم");
+        return;
+      }
+      if (this.selectedImages_resend.length === 0) {
+        alert("الرجاء اختيار صورة واحدة على الأقل");
+        return;
+      }
+      if (!this.message.trim()) {
+        alert("الرجاء كتابة نص الرسالة");
+        return;
+      }
+
+      for (var i = 0; i < this.selectedImages_resend.length; i++) {
+        this.imagesToSend_resend.push(this.selectedImages_resend[i].id);
+      }
+
+      var from_how1 = null;
+
+      if (this.selectedRecipient.resendFrom == this.my_department_id) {
+        from_how1 = 1;
+      } else {
+        from_how1 = 2;
+      }
+
+      var ReplyViewModel = {
+        UserId: Number(localStorage.getItem("AY_LW")),
+        mailId: Number(this.mailId_to_get_mail_by_id),
+        SendsId: Number(this.selectedRecipient.sendsToId),
+        ReplyId: Number(this.reply_id_for_resend),
+        DepartmentId: Number(this.selectedRecipient.id),
+        MailDetails: this.message,
+        CanNotDeleted: 1,
+        resended: true,
+        from: from_how1,
+        MyDep: Number(this.my_department_id),
+        IsMember: 0,
+        ResourceId: this.imagesToSend_resend,
+      };
+
+      this.$http.mailService
+        .ResendReplayWithPhoto(ReplyViewModel)
+        .then(() => {
+          setTimeout(() => {
+            alert(
+              "  تمت إعادة توجيه عدد  " +
+                this.selectedImages_resend.length +
+                " صور إلى " +
+                this.selectedRecipient.departmentName,
+            );
+
+            var dep_name = this.departmentName;
+            var dep_flag = this.departmentflag;
+            this.show_senders(
+              this.mailId_to_get_mail_by_id,
+              this.to_test_passing_mail_type_to_get_mail_by_id,
+              this.show_senders_mail,
+              this.resend_from_to_show,
+              this.measure_id1,
+            );
+
+            this.departmentName = dep_name;
+            this.departmentflag = dep_flag;
+
+            this.back_resend();
+
+            //********end 28/2/2023
+          }, 500);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            alert("حدث خطأ أثناء إعادة توجيه الرد الرجاء المحاولة مرة اخرى");
+          }, 500);
+          console.log(err);
+        });
+    },
+
+    resend_reply(id) {
+      this.$router.push({
+        name: "resend_reply",
+        params: {
+          rep_id: id,
+          dep_id: this.my_department_id_to_get_mail_by_id,
+          mail_id: this.mailId_to_get_mail_by_id,
+        },
+      });
+    },
+
+    protectBaseText(event) {
+      const cursorPos = event.target.selectionStart;
+      // إذا النص لا يبدأ بالجزء الثابت، نعيده كما هو مع الإضافة الجديدة فقط
+      if (!this.cancel_reason2.startsWith(this.baseText)) {
+        this.cancel_reason2 =
+          this.baseText + this.cancel_reason2.slice(this.baseText.length);
+      }
+      // لو حاول يحذف أو يعدل في النص الثابت، نرجع المؤشر بعده
+      if (cursorPos < this.baseText.length) {
+        event.target.selectionStart = event.target.selectionEnd =
+          this.baseText.length;
+      }
+    },
+
+    
+
+   
+
+
+
+    async show_senders(
+      id,
+      mail_type,
+      number,
+      resend_from,
+      measure_id,
+      dep_name,
+      dep_flag,
+    ) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.mailId_to_get_mail_by_id = id;
+      this.to_test_passing_mail_type_to_get_mail_by_id = mail_type;
+      this.resend_from_to_show = resend_from;
+      this.departmentName = "";
+      this.mail_sub_number = false;
+      this.show_number = false;
+      this.sub_number = "";
+      this.sub_id = 0;
+
+      (this.realated_departments = []),
+        (this.realated_departmentselect = false),
+        (this.realated_departmentNameSelected = ""),
+        (this.realated_departmentIdSelected = ""),
+        (this.measure_id1 = measure_id);
+
+      this.replies = [];
+      this.departmentflag = 0;
+
+      this.$http.mailService
+        .show_senders2(id, this.my_department_id, Number(resend_from))
+        .then((res) => {
+          this.show_senders_mail = number;
+          this.senders = res.data;
+
+          setTimeout(() => {
+      //      this.GetRelatedDepartments();
+            if (dep_name) {
+              this.departmentName = dep_name;
+            }
+            if (dep_flag) {
+              this.departmentflag = dep_flag;
+            }
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.senders = [];
+            this.screenFreeze = false;
+            this.loading = false;
+            console.log(err);
+          }, 100);
+        });
+    },
+
+    search_reset() {
+      this.mail_id = "";
+      this.summary = "";
+      this.general_incoming_number = "";
+  
+      this.year_filter = "0";
+   
+      this.sig_filter = 3;
+
+    },
+
+    async deletereply() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.alert_delete_document = false;
+
+      this.$http.mailService
+        .delete_reply(
+          Number(this.reply_id_to_delete),
+          Number(localStorage.getItem("AY_LW")),
+        )
+        .then((res) => {
+          this.getMailById();
+          // this.to_pass_data_to_get_mail_by_id(
+          //                 this.mail.mail_id,
+          //                 this.my_department_id,
+          //                 this.mail.type_of_mail,
+          //                 this.mail.sends_id,
+          //                 this.mail.mangment_sender
+          //               )
+        })
+        .catch((err) => {});
+    },
+
+    async Next_prevent_GetResources_ById(x) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      if (x == "next") {
+        this.reply_doc_number++;
+      } else {
+        this.reply_doc_number--;
+      }
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.documentService
+        .GetResources_ById(this.id_reply_image, this.reply_doc_number)
+        .then((res) => {
+          this.show_current_reply_image_to_for_bigger_screen_model = true;
+          this.reply_total_of_doc = res.data.total;
+
+          this.reply_image_of_doc = res.data.date[0].path;
+          this.reply_id_of_doc = res.data.date[0].id;
+
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 200);
+        })
+        .catch((err) => {
+          this.screenFreeze = false;
+          this.loading = false;
+          console.log(err);
+        });
+    },
+
+    async GetResources_ById(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.id_reply_image = id;
+
+      this.reply_doc_number = 1;
+      this.reply_image_of_doc = [];
+      this.reply_id_of_doc = "";
+      this.reply_total_of_doc = "";
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.documentService
+        .GetResources_ById(id, this.reply_doc_number)
+        .then((res) => {
+          this.show_current_reply_image_to_for_bigger_screen_model = true;
+          this.reply_total_of_doc = res.data.total;
+
+          this.reply_image_of_doc = res.data.date[0].path;
+          this.reply_id_of_doc = res.data.date[0].id;
+
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 200);
+        })
+        .catch((err) => {
+          this.screenFreeze = false;
+          this.loading = false;
+          console.log(err);
+        });
+    },
+
+    async GetResources_ById2(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.id_reply_image = id;
+      this.currentIndex = 0;
+      this.reply_doc_number = 1;
+      this.reply_image_of_doc = [];
+      this.reply_id_of_doc = "";
+      this.reply_total_of_doc = "";
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.documentService
+        .GetResources_ById2(id)
+        .then((res) => {
+          this.show_current_reply_image_to_for_bigger_screen_model = true;
+          this.reply_total_of_doc = res.data.total;
+
+          this.reply_image_of_doc = res.data.date;
+          this.reply_id_of_doc = res.data.date[0].id;
+
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 200);
+        })
+        .catch((err) => {
+          this.screenFreeze = false;
+          this.loading = false;
+          console.log(err);
+        });
+    },
+
+    //************************
+    reply1() {
+      if (this.conn == null) {
+        console.log("conn=" + this.conn);
+        console.log("ggggggggggg");
+        //  this.conn = new WebSocket("ws://localhost:58316/ws");
+        this.conn = new WebSocket("ws://mail:82/ws");
+        //    this.conn = new WebSocket("ws://mail:96/ws");
+
+        this.conn.onclose = (event) => {
+          console.log("close code_inbox.vue=" + event.code);
+        };
+        this.conn.onmessage = (event) => {
+          console.log("inbox onmessage");
+          let scannedImage = event.data;
+          let mgs = JSON.parse(scannedImage);
+          this.imagesscantest = mgs;
+
+          var ind = this.imagesscantest.index;
+          console.log("inbox index=" + ind);
+          if (ind == 1) {
+            this.keyid = this.imagesscantest.keyid;
+            console.log("inbox keyid=" + this.keyid);
+            console.log("count websocket_inbox=" + this.imagesscantest.count1);
+          } else {
+            console.log("inbox.vue else");
+            //this.imagesToSend=[]
+            for (var i = 0; i < mgs["image"].length; i++) {
+              //***stop code  13/12/2024
+              //   this.indexOfimagesToShow++;
+
+              // this.imagesToSend.push({
+              //   baseAs64: mgs["image"][i],
+              //   index: this.indexOfimagesToShow,
+              //   department_id:Number(this.my_department_id),
+              //  });
+
+              //*******end stop code
+              console.log("index_inbox=" + mgs.image[i].num_img);
+              this.imagesToSend.push({
+                baseAs64: mgs.image[i].img,
+                index: mgs.image[i].num_img,
+                department_id: Number(this.my_department_id),
+              });
+              //**********end 13/12/2024
+            }
+          }
+        };
+      } else if (this.conn.readyState === 3 || this.conn.readyState === 2) {
+        console.log("readystate=" + this.conn.readyState);
+        this.conn.close();
+        this.conn = null;
+        this.reply1();
+      } else {
+        var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
+        var sends_id_to_get_mail_by_id = this.sends_id_to_get_mail_by_id;
+        var department_Id = this.department_Id;
+        var keyid = this.keyid;
+
+        var timeout;
+        window.addEventListener("blur", function (e) {
+          window.clearTimeout(timeout);
+        });
+
+        timeout = window.setTimeout(function () {
+          window.location = "http://mail/scanner_app8/SetupNew.msi";
+        }, 1000);
+
+        document.location =
+          "Stage2Scaner:flag=0" +
+          "userId=" +
+          localStorage.getItem("AY_LW") +
+          "mId=" +
+          mailId_to_get_mail_by_id +
+          "send_ToId=" +
+          sends_id_to_get_mail_by_id +
+          "to=" +
+          department_Id +
+          "keyid=" +
+          keyid;
+      }
+
+      //**********21/1/2023
+      /* var link = document.getElementById("a4");
+      var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
+      var sends_id_to_get_mail_by_id = this.sends_id_to_get_mail_by_id;
+      var department_Id = this.department_Id;
+      var keyid = this.keyid;
+
+      var timeout;
+      window.addEventListener("blur", function (e) {
+        window.clearTimeout(timeout);
+      });
+
+      timeout = window.setTimeout(function () {
+        window.location = "http://mail/scanner_app/Setup1.msi";
+      }, 1000);
+
+      link.href =
+        "SScaner:flag=0" +
+        "userId=" +
+        localStorage.getItem("AY_LW") +
+        "mId=" +
+        mailId_to_get_mail_by_id +
+        "send_ToId=" +
+        sends_id_to_get_mail_by_id +
+        "to=" +
+        department_Id +
+        "keyid=" +
+        keyid;*/
+      //***********21/1/2023
+    },
+    //***************************
+
+    async print_image() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.to_test_print = true;
+      this.$http.mailService
+        .PrintOrShowDocument(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(localStorage.getItem("AY_LW")),
+          Number(this.from_reply_or_general),
+        )
+        .then((res) => {
+          setTimeout(() => {
+            console.log(res);
+            this.loading = false;
+            this.screenFreeze = false;
+          }, 500);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.loading = false;
+            this.screenFreeze = false;
+          }, 500);
+          console.log(err);
+        });
+    },
+
+    async show_reply_images(index, plase) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.from_reply_or_general = plase;
+
+      this.screenFreeze = true;
+      this.loading = true;
+
+      this.$http.mailService
+        .PrintOrShowDocument(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(localStorage.getItem("AY_LW")),
+          2,
+        )
+        .then((res) => {
+          this.show_images = [];
+          this.indextotest = 0;
+
+          this.show_images = this.replies[index].resources;
+
+          this.testimage = this.show_images[0].path;
+
+          setTimeout(() => {
+            this.show_images_model = true;
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.loading = false;
+            this.screenFreeze = false;
+          }, 500);
+          console.log(err);
+        });
+    },
+
+    scanToReply() {
+      scanner.scan(this.displayReplyImagesOnPage, {
+        output_settings: [
+          {
+            type: "return-base64",
+            format: "jpg",
+          },
+        ],
+      });
+    },
+
+    displayReplyImagesOnPage(successful, mesg, response) {
+      if (!successful) {
+        // On error
+        return;
+      }
+
+      if (
+        successful &&
+        mesg != null &&
+        mesg.toLowerCase().indexOf("user cancel") >= 0
+      ) {
+        // User cancelled.
+        return;
+      }
+
+      var scannedImages = scanner.getScannedImages(response, true, false); // returns an array of ScannedImage
+      for (
+        var i = 0;
+        scannedImages instanceof Array && i < scannedImages.length;
+        i++
+      ) {
+        var scannedImage = scannedImages[i];
+        // this.processScannedImage(scannedImage);
+        this.indexOfimagesToShow++;
+        this.imagesToSend.push({
+          baseAs64: scannedImage.src,
+          index: this.indexOfimagesToShow,
+          department_id: Number(this.my_department_id),
+        });
+
+        // if (this.imagesToSend.length > 0) {
+        // this.testimageToSend = this.imagesToSend[0].baseAs64;
+        // this.ButtonUploadImagesMail = true;
+        // }
+      }
+
+      // this.UploadImagesMail()
+
+      // if (this.mailType == 1) {
+      //   this.to_test_passing_mail_type = 1;
+      // }
+      // if (this.mailType == 2) {
+      //   this.to_test_passing_mail_type = 2;
+      // }
+      // if (this.mailType == 3) {
+      //   this.to_test_passing_mail_type = 3;
+      // }
+
+      // setTimeout(() => {
+      //   this.GetSentMailById();
+      // }, 1000);
+    },
+
+    //*************************end addreplay_old
+    async update_reply_to_complet_sent_img_old(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      var new_index_of_reply_img = 10;
+
+      if (index_of_reply_img > new_index_of_reply_img) {
+        this.screenFreeze = true;
+        this.loading = true;
+
+        if (this.sends_from_to_reply == Number(this.my_department_id)) {
+          var ReplyViewModel = {
+            userId: Number(localStorage.getItem("AY_LW")),
+            mailId: Number(this.mailId_to_get_mail_by_id),
+            send_ToId: Number(this.sends_id_to_get_mail_by_id),
+            from: 1,
+            reply: {
+              mail_detail: this.reply_to_add,
+              To: Number(this.department_Id),
+            },
+            file: {
+              list: this.imagesToSend,
+            },
+            id_of_reply: id,
+          };
+        } else {
+          var ReplyViewModel = {
+            userId: Number(localStorage.getItem("AY_LW")),
+            mailId: Number(this.mailId_to_get_mail_by_id),
+            send_ToId: Number(this.sends_id_to_get_mail_by_id),
+            from: 2,
+            reply: {
+              mail_detail: this.reply_to_add,
+              To: Number(this.department_Id),
+            },
+            file: {
+              list: this.imagesToSend,
+            },
+            id_of_reply: id,
+          };
+        }
+
+        this.$http.mailService
+          .NewAddReply(ReplyViewModel)
+          .then((res) => {
+            setTimeout(() => {
+              console.log(res);
+              this.imagesToSend = [];
+              // this.documentSection = true;
+              // this.proceduresSection = true;
+
+              for (let index = 0; index < this.inboxMails.length; index++) {
+                if (
+                  this.inboxMails[index].mail_id ==
+                  this.mailId_to_get_mail_by_id
+                ) {
+                  if (
+                    this.inboxMails[index].flag == 2 ||
+                    this.inboxMails[index].flag == 3
+                  ) {
+                    this.inboxMails[index].flag = 4;
+                    this.inboxMails[index].state = " تم الرد من قيلك ";
+                  }
+                }
+              }
+
+              this.loading = false;
+              this.screenFreeze = false;
+
+              this.reply_to_add = "";
+              // this.getMailById();
+
+              // from Ayoub to eman
+
+              var index_of_reply_img = 12;
+
+              if (index_of_reply_img > 10) {
+                var id_of_reply_from_beackend = 1;
+                this.update_reply_to_complet_sent_img_old(
+                  id_of_reply_from_beackend,
+                );
+              }
+            }, 500);
+          })
+          .catch((err) => {
+            setTimeout(() => {
+              this.loading = false;
+              this.screenFreeze = false;
+            }, 500);
+            console.log(err);
+          });
+      }
+    },
+    //*******************end addreply_old
+
+    //*********************************1/3/2023
+    async AddReply() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.screenFreeze = true;
+      this.loading = true;
+
+      if (this.sends_from_to_reply == Number(this.my_department_id)) {
+        var ReplyViewModel = {
+          userId: Number(localStorage.getItem("AY_LW")),
+          mailId: Number(this.mailId_to_get_mail_by_id),
+          send_ToId: Number(this.sends_id_to_get_mail_by_id),
+          from: 1,
+          sub_mail_num: Number(this.sub_id),
+          reply: {
+            mail_detail: this.reply_to_add,
+            To: Number(this.department_Id),
+          },
+          file: {
+            list: this.imagesToSend.slice(0, 50),
+          },
+        };
+      } else {
+        var ReplyViewModel = {
+          userId: Number(localStorage.getItem("AY_LW")),
+          mailId: Number(this.mailId_to_get_mail_by_id),
+          send_ToId: Number(this.sends_id_to_get_mail_by_id),
+          from: 2,
+          sub_mail_num: Number(this.sub_id),
+          reply: {
+            mail_detail: this.reply_to_add,
+            To: Number(this.department_Id),
+          },
+          file: {
+            list: this.imagesToSend.slice(0, 50),
+          },
+        };
+      }
+
+      this.$http.mailService
+        .NewAddReply(ReplyViewModel)
+        .then((res) => {
+          setTimeout(() => {
+            console.log("res=" + res.data.replyid);
+            this.imagesToSend = [];
+            // this.documentSection = true;
+            // this.proceduresSection = true;
+
+            this.mail_sub_number = false;
+            this.show_number = false;
+            this.sub_number = "";
+            this.sub_id = 0;
+
+            if (this.sends_from_to_reply == Number(this.my_department_id)) {
+              for (let index = 0; index < this.senders.length; index++) {
+                if (this.senders[index].send_ToId == this.sends_id) {
+                  if (this.senders[index].flag == 4) {
+                    this.senders[index].flag = 5;
+                    this.senders[index].state = "تم الرد من قبلك";
+                  }
+                  console.log("5555555555555555");
+                }
+              }
+
+              for (let index = 0; index < this.inboxMails.length; index++) {
+                if (
+                  this.inboxMails[index].mail_id ==
+                  this.mailId_to_get_mail_by_id
+                ) {
+                  if (
+                    this.inboxMails[index].flag == 2 ||
+                    this.inboxMails[index].flag == 3
+                  ) {
+                    this.inboxMails[index].flag = 4;
+                    this.inboxMails[index].state = " تم الرد من قيلك ";
+                  }
+                }
+              }
+            } else {
+              for (let index = 0; index < this.senders.length; index++) {
+                if (this.senders[index].send_ToId == this.sends_id) {
+                  if (
+                    this.senders[index].flag == 2 ||
+                    this.senders[index].flag == 3
+                  ) {
+                    this.senders[index].flag = 4;
+                    this.senders[index].state = "تم الرد من قبلك";
+                  }
+                }
+                console.log("5555555555555555");
+              }
+
+              for (let index = 0; index < this.inboxMails.length; index++) {
+                if (
+                  this.inboxMails[index].mail_id ==
+                  this.mailId_to_get_mail_by_id
+                ) {
+                  if (
+                    this.inboxMails[index].flag == 2 ||
+                    this.inboxMails[index].flag == 3
+                  ) {
+                    this.inboxMails[index].flag = 4;
+                    this.inboxMails[index].state = " تم الرد من قيلك ";
+                  }
+                }
+              }
+            }
+
+            this.loading = false;
+            this.screenFreeze = false;
+            this.reply_to_add = "";
+            //28/2/2023 this.getMailById();
+            var cou = Math.ceil(this.imagesToSend.length / 50);
+            if (cou > 1) {
+              console.log("cou=" + cou);
+              var id_of_reply_from_beackend = res.data.replyid; //101
+              this.update_reply_to_complet_sent_img(
+                1,
+                id_of_reply_from_beackend,
+                cou,
+                50,
+              );
+            }
+            //****28/2/2023
+            else {
+              this.getMailById();
+            }
+
+            this.show_senders(
+              this.mailId_to_get_mail_by_id,
+              this.to_test_passing_mail_type_to_get_mail_by_id,
+              this.show_senders_mail,
+              this.resend_from_to_show,
+              this.measure_id1,
+              this.departmentName,
+              this.departmentflag,
+            );
+
+            // this.to_pass_data_to_get_mail_by_id(
+            //   this.my_department_id_to_get_mail_by_id,
+            //   this.mailId_to_get_mail_by_id,
+            //   this.departmentName,
+            //   this.departmentflag,
+            //   this.resend_for_done,
+            //   this.shared
+            // );
+
+            //********end 28/2/2023
+          }, 500);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.loading = false;
+            this.screenFreeze = false;
+            this.imagesToSend = [];
+          }, 500);
+          console.log(err);
+        });
+    },
+
+    async update_reply_to_complet_sent_img(ii, id, count1, a2) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      // var new_index_of_reply_img = 10
+
+      //  if(index_of_reply_img > new_index_of_reply_img)
+      console.log("update_reply ii=" + ii);
+
+      if (ii < count1) {
+        var a1 = a2;
+        a2 = a1 + 50;
+        this.screenFreeze = true;
+        this.loading = true;
+        if (this.sends_from_to_reply == Number(this.my_department_id)) {
+          var ReplyViewModel = {
+            userId: Number(localStorage.getItem("AY_LW")),
+            mailId: Number(this.mailId_to_get_mail_by_id),
+            send_ToId: Number(this.sends_id_to_get_mail_by_id),
+            from: 1,
+            reply: {
+              mail_detail: this.reply_to_add,
+              To: Number(this.department_Id),
+            },
+            file: {
+              list: this.imagesToSend.slice(a1, a2),
+            },
+            id_of_reply: id,
+          };
+        } else {
+          var ReplyViewModel = {
+            userId: Number(localStorage.getItem("AY_LW")),
+            mailId: Number(this.mailId_to_get_mail_by_id),
+            send_ToId: Number(this.sends_id_to_get_mail_by_id),
+            from: 2,
+            reply: {
+              mail_detail: this.reply_to_add,
+              To: Number(this.department_Id),
+            },
+            file: {
+              list: this.imagesToSend.slice(a1, a2),
+            },
+            id_of_reply: id,
+          };
+        }
+
+        this.$http.mailService
+          .update_replay(ReplyViewModel)
+          .then((res) => {
+            setTimeout(() => {
+              console.log(res);
+              //28/3/2023  this.imagesToSend = [];
+              // this.documentSection = true;
+              // this.proceduresSection = true;
+
+              if (this.sends_from_to_reply == Number(this.my_department_id)) {
+                for (let index = 0; index < this.senders.length; index++) {
+                  if (this.senders[index].send_ToId == this.sends_id) {
+                    if (this.senders[index].flag == 4) {
+                      this.senders[index].flag = 5;
+                      this.senders[index].state = "تم الرد من قبلك";
+                    }
+                  }
+                }
+
+                for (let index = 0; index < this.inboxMails.length; index++) {
+                  if (
+                    this.inboxMails[index].mail_id ==
+                    this.mailId_to_get_mail_by_id
+                  ) {
+                    if (
+                      this.inboxMails[index].flag == 2 ||
+                      this.inboxMails[index].flag == 3
+                    ) {
+                      this.inboxMails[index].flag = 4;
+                      this.inboxMails[index].state = " تم الرد من قيلك ";
+                    }
+                  }
+                }
+              } else {
+                for (let index = 0; index < this.inboxMails.length; index++) {
+                  if (
+                    this.inboxMails[index].mail_id ==
+                    this.mailId_to_get_mail_by_id
+                  ) {
+                    if (
+                      this.inboxMails[index].flag == 2 ||
+                      this.inboxMails[index].flag == 3
+                    ) {
+                      this.inboxMails[index].flag = 4;
+                      this.inboxMails[index].state = " تم الرد من قيلك ";
+                    }
+                  }
+                }
+
+                for (let index = 0; index < this.inboxMails.length; index++) {
+                  if (
+                    this.inboxMails[index].mail_id ==
+                    this.mailId_to_get_mail_by_id
+                  ) {
+                    if (
+                      this.inboxMails[index].flag == 2 ||
+                      this.inboxMails[index].flag == 3
+                    ) {
+                      this.inboxMails[index].flag = 4;
+                      this.inboxMails[index].state = " تم الرد من قيلك ";
+                    }
+                  }
+                }
+              }
+
+              this.loading = false;
+              this.screenFreeze = false;
+
+              this.reply_to_add = "";
+              // this.getMailById();
+
+              // from Ayoub to eman
+
+              // var index_of_reply_img = 12
+
+              // if(index_of_reply_img > 10)
+              ii++;
+              if (ii < count1) {
+                // var id_of_reply_from_beackend = 1
+                //   this.update_reply_to_complet_sent_img(ii,id_of_reply_from_beackend);
+                this.update_reply_to_complet_sent_img(ii, id, count1, a2);
+              }
+              //*********1/3/2023
+              else this.getMailById();
+              //*******end 1/3/2023
+            }, 500);
+          })
+          .catch((err) => {
+            setTimeout(() => {
+              this.loading = false;
+              this.screenFreeze = false;
+            }, 500);
+            console.log(err);
+          });
+      }
+    },
+    //************************************end 1/3/2023 addreply
+
+    // to_pass_data_to_get_mail_by_id(
+    //   mailId_to_get_mail_by_id,
+    //   my_department_id_to_get_mail_by_id,
+    //   to_test_passing_mail_type_to_get_mail_by_id,
+    //   sends_id_to_get_mail_by_id,
+    //   mangment_sender_to_get_mail_by_id
+    // ) {
+    //   this.mailId_to_get_mail_by_id = mailId_to_get_mail_by_id;
+    //   this.my_department_id_to_get_mail_by_id =
+    //     my_department_id_to_get_mail_by_id;
+    //   this.to_test_passing_mail_type_to_get_mail_by_id =
+    //     to_test_passing_mail_type_to_get_mail_by_id;
+    //   this.sends_id_to_get_mail_by_id = sends_id_to_get_mail_by_id;
+    //   this.mangment_sender_to_get_mail_by_id =
+    //     mangment_sender_to_get_mail_by_id;
+
+    //   this.getMailById();
+    // },
+
+    to_pass_data_to_get_mail_by_id(
+      my_department_id_to_get_mail_by_id,
+      sends_id,
+      departmentName,
+      flag,
+      resensfrom,
+      shared,
+    ) {
+      this.departmentflag = 0;
+      this.my_department_id_to_get_mail_by_id =
+        my_department_id_to_get_mail_by_id;
+
+      this.shared = shared;
+
+      this.sends_id = sends_id;
+
+      this.department_Id = my_department_id_to_get_mail_by_id;
+
+      this.department_Id_done = my_department_id_to_get_mail_by_id;
+
+      this.departmentName = departmentName;
+
+      this.departmentflag = flag;
+
+      this.resend_for_done = resensfrom;
+
+      this.sends_id_to_get_mail_by_id = sends_id;
+
+      this.replies = [];
+
+      this.mail_sub_number = false;
+      this.show_number = false;
+      this.sub_number = "";
+      this.sub_id = 0;
+
+      this.getMailById(resensfrom);
+    },
+
+    async getMailById(resensfrom) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.reply_to_add = "";
+      this.imagesToSend = [];
+      this.replies = [];
+      (this.isdone2 = false),
+        (this.sends_from_to_reply = resensfrom),
+        this.$http.mailService
+          .GetReplies(this.sends_id_to_get_mail_by_id)
+          .then((res) => {
+            this.replies = res.data;
+
+            (this.sends_from_to_reply = this.replies[0].sends_from),
+              (this.isdone = Boolean(this.replies[0].isdone));
+            console.log("done11111111111111");
+
+            setTimeout(() => {
+              // document.getElementById("scroll").scrollTop =
+              //   document.getElementById("scroll").scrollHeight;
+            }, 100);
+          })
+          .catch((err) => {
+            console.log(err);
+            {
+              this.isdone = false;
+              console.log("done2222222222222");
+            }
+          });
+
+      // this.$http.mailService
+      //   .GetInboxMailById2(
+      //     this.mailId_to_get_mail_by_id,
+      //     this.my_department_id_to_get_mail_by_id,
+      //     this.to_test_passing_mail_type_to_get_mail_by_id
+      //   )
+      //   .then((res) => {
+
+      //     this.replies = res.data.list;
+
+      //     setTimeout(() => {
+      //       // document.getElementById("scroll").scrollTop =
+      //       //   document.getElementById("scroll").scrollHeight;
+      //     }, 100);
+
+      //     this.consignees = res.data.actionSenders;
+
+      //     this.imagesToShow = res.data.mail_Resourcescs;
+
+      //     if (this.imagesToShow.length > 0) {
+      //       this.testimage = this.imagesToShow[0].path;
+      //     }
+
+      //     if (this.to_test_passing_mail_type == "2") {
+      //       this.external_mailId = res.data.external.id;
+
+      //       this.action_required_by_the_entity =
+      //         res.data.external.action_required_by_the_entity;
+
+      //       this.mail_forwarding = res.data.external.action;
+
+      //       this.mail_forwarding_sector_side = res.data.sector.type;
+
+      //       this.sectorNameSelected = res.data.sector.section_Name;
+
+      //       this.sideNameSelected = res.data.side.section_Name;
+      //     }
+      //     if (this.to_test_passing_mail_type == "3") {
+      //       this.external_mailId = res.data.inbox.id;
+
+      //       this.mail_forwarding = res.data.inbox.action;
+
+      //       this.mail_forwarding_sector_side = res.data.sector.type;
+
+      //       this.sectorNameSelected = res.data.sector.section_Name;
+
+      //       this.sideNameSelected = res.data.side.section_Name;
+
+      //       this.ward_to = res.data.inbox.to;
+
+      //       this.mail_ward_type = res.data.inbox.type;
+
+      //       this.entity_mail_date = res.data.inbox.send_time;
+
+      //       this.entity_reference_number =
+      //         res.data.inbox.entity_reference_number;
+
+      //       this.procedure_type = res.data.inbox.procedure_type;
+      //     }
+
+      //     //   this.GetDocmentForMail();
+      //     //   this.GetDocmentForMailToShow();
+
+      //     //   this.GetProcessingResponses()
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+    },
+
+    previousImage() {
+      if (this.indextotest > 0) {
+        this.indextotest--;
+        this.testimage = this.show_images[this.indextotest].url;
+      }
+    },
+
+    nextImage() {
+      if (this.indextotest < this.show_images.length - 1) {
+        this.indextotest++;
+        this.testimage = this.show_images[this.indextotest].url;
+      }
+    },
+
+    async GetAllDocumentsAndReplies(id, uid, department_id, mydep, sends) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.sends_for_sig = sends;
+      this.p_id = id;
+      this.p_uid = uid;
+      this.p_did = department_id;
+      this.p_mydep = mydep;
+
+      this.from_reply_or_general = 1;
+      this.indextotest = 0;
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.mailService
+        .GetMailResourcesAndAllReplys(
+          id,
+          Number(uid),
+          Number(department_id),
+          Number(mydep),
+        )
+        .then((res) => {
+          this.show_images = res.data;
+
+          this.testimage = this.show_images[0].url;
+
+          setTimeout(() => {
+            this.show_images_model = true;
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          this.loading = false;
+          this.there_are_no_documents = true;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.there_are_no_documents = false;
+            console.log(err);
+          }, 700);
+        });
+    },
+
+    async MergeAndDownload(id, uid, department_id, mydep) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.from_reply_or_general = 1;
+      this.indextotest = 0;
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.mailService
+        .MergeAndDownload(id, Number(uid), Number(department_id), Number(mydep))
+        .then((res) => {
+          const blob = res.data;
+
+          this.printPdf(URL.createObjectURL(blob));
+
+          setTimeout(() => {
+            this.show_images_model = true;
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          this.loading = false;
+          this.there_are_no_documents = true;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.there_are_no_documents = false;
+            console.log(err);
+          }, 700);
+        });
+    },
+
+    async GetAllDocuments(id, plase, department_id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.from_reply_or_general = plase;
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.mailService
+        .GetAllDocuments(
+          id,
+          Number(localStorage.getItem("AY_LW")),
+          Number(department_id),
+        )
+        .then((res) => {
+          this.show_images = res.data;
+
+          this.testimage = this.show_images[0].path;
+
+          setTimeout(() => {
+            this.show_images_model = true;
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          this.loading = false;
+          this.there_are_no_documents = true;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.there_are_no_documents = false;
+            console.log(err);
+          }, 700);
+        });
+    },
+
+    async GetAllDocuments_sec(id, plase, department_id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.from_reply_or_general = plase;
+      this.screenFreeze = true;
+      this.loading = true;
+      this.$http.mailService
+        .GetAllDocuments_sec(
+          id,
+          Number(localStorage.getItem("AY_LW")),
+          Number(department_id),
+        )
+        .then((res) => {
+          this.show_images = res.data;
+
+          this.testimage = this.show_images[0].path;
+
+          setTimeout(() => {
+            this.show_images_model = true;
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          this.loading = false;
+          this.there_are_no_documents = true;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.there_are_no_documents = false;
+            console.log(err);
+          }, 700);
+        });
+    },
+
+    async GetInboxs() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.show_senders_mail = 0;
+      this.senders = [];
+
+      (this.realated_departments = []),
+        (this.realated_departmentselect = false),
+        (this.realated_departmentNameSelected = ""),
+        (this.realated_departmentIdSelected = "");
+
+      var date_from2 = this.date_from;
+      var date_to2 = this.date_to;
+
+      if (this.year_filter != 0) {
+        date_from2 = this.year_filter + "-01-01";
+        date_to2 = this.year_filter + "-12-31";
+      }
+
+      if (this.departmentNameSelected == "") {
+        this.departmentIdSelected = "";
+      }
+
+      // if(this.member_done!=""){
+      //   this.member_done=Number(this.member_done)
+      // }
+      this.screenFreeze = true;
+      this.loading = true;
+      this.inboxMails = [];
+      this.$http.mailService
+        .inboxs(
+          this.memberIdSelected,
+          this.my_user_id,
+          this.mailType,
+          this.my_department_id,
+          date_from2,
+          date_to2,
+          this.by_date_of_reply,
+          this.mail_id,
+          this.general_incoming_number,
+          this.summary,
+          this.departmentIdSelected,
+          this.sideIdSelected,
+          this.measureIdSelected,
+          this.classificationIdSelected,
+          this.mail_caseIdSelected,
+          this.s_number,
+          this.redirection,
+          Number(this.done_mails),
+          Number(this.not_done),
+          this.new_reply,
+          Number(this.member_done),
+          Number(this.sig_filter),
+          Number(this.cont_state),
+          this.page_num,
+          this.page_size,
+        )
+        .then((res) => {
+          this.inboxMails = res.data.mail;
+          this.replies = [];
+          this.sends_id_to_get_mail_by_id = "";
+          this.mangment_sender_to_get_mail_by_id = "";
+          this.reply_to_add = "";
+          (this.departmentName = ""), (this.mail_sub_number = false);
+          this.show_number = false;
+          this.sub_number = "";
+          this.sub_id = 0((this.total_of_transaction = res.data.total));
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+          }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+            console.log(err);
+          }, 100);
+        });
+    },
+
+    async GetMailsToPrint2() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      var date_from2 = this.date_from;
+      var date_to2 = this.date_to;
+
+      if (this.year_filter != 0) {
+        date_from2 = this.year_filter + "-01-01";
+        date_to2 = this.year_filter + "-12-31";
+      }
+
+      if (this.departmentNameSelected == "") {
+        this.departmentIdSelected = "";
+      }
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.mails_to_print = [];
+      this.$http.mailService
+        .inboxs(
+          this.memberIdSelected,
+          this.my_user_id,
+          this.mailType,
+          this.my_department_id,
+          date_from2,
+          date_to2,
+          this.by_date_of_reply,
+          this.mail_id,
+          this.general_incoming_number,
+          this.summary,
+          this.departmentIdSelected,
+          this.sideIdSelected,
+          this.measureIdSelected,
+          this.classificationIdSelected,
+          this.mail_caseIdSelected,
+          this.s_number,
+          this.redirection,
+          Number(this.done_mails),
+          Number(this.not_done),
+          this.new_reply,
+          Number(this.member_done),
+          Number(this.sig_filter),
+          Number(this.cont_state),
+          this.page_num,
+          this.page_size2,
+        )
+        .then((res) => {
+          this.mails_to_print = res.data.mail;
+
+          this.total_of_transaction = res.data.total;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+
+            this.$router.push({
+              name: "member_report2",
+              params: {
+                dateFrom: this.date_from,
+                dateTo: this.date_to,
+                total_of_transaction: this.total_of_transaction,
+                mails: this.mails_to_print,
+                member_name: this.memberNameSelected,
+              },
+            });
+          }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+            console.log(err);
+          }, 100);
+        });
+    },
+
+    async GetMailsToPrint() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      var date_from2 = this.date_from;
+      var date_to2 = this.date_to;
+
+      if (this.year_filter != 0) {
+        date_from2 = this.year_filter + "-01-01";
+        date_to2 = this.year_filter + "-12-31";
+      }
+
+      if (this.departmentNameSelected == "") {
+        this.departmentIdSelected = "";
+      }
+
+      this.screenFreeze = true;
+      this.loading = true;
+      this.mails_to_print = [];
+      this.$http.mailService
+        .inboxs(
+          this.memberIdSelected,
+          this.my_user_id,
+          this.mailType,
+          this.my_department_id,
+          date_from2,
+          date_to2,
+          this.by_date_of_reply,
+          this.mail_id,
+          this.general_incoming_number,
+          this.summary,
+          this.departmentIdSelected,
+          this.sideIdSelected,
+          this.measureIdSelected,
+          this.classificationIdSelected,
+          this.mail_caseIdSelected,
+          this.s_number,
+          this.redirection,
+          Number(this.done_mails),
+          Number(this.not_done),
+          this.new_reply,
+          Number(this.member_done),
+          Number(this.sig_filter),
+          Number(this.cont_state),
+          this.page_num,
+          this.page_size2,
+        )
+        .then((res) => {
+          this.mails_to_print = res.data.mail;
+
+          this.total_of_transaction = res.data.total;
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+
+            this.$router.push({
+              name: "incoming_report",
+              params: {
+                dateFrom: this.date_from,
+                dateTo: this.date_to,
+                total_of_transaction: this.total_of_transaction,
+                mails: this.mails_to_print,
+                member_name: this.memberNameSelected,
+              },
+            });
+          }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+            console.log(err);
+          }, 100);
+        });
+    },
+
+    async read_it_mail(id) {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      // this.screenFreeze = true;
+      // this.loading = true;
+      this.$http.mailService
+        .read_it_mail(
+          id,
+          this.my_department_id,
+          Number(localStorage.getItem("AY_LW")),
+        )
+        .then((res) => {
+          console.log(res);
+          // this.inboxMails = res.data.mail;
+          // this.total_of_transaction = res.data.total
+          // setTimeout(() => {
+          //     this.screenFreeze = false;
+          //     this.loading = false;
+
+          this.GetInboxs();
+          // }, 300);
+        })
+        .catch((err) => {
+          setTimeout(() => {
+            this.screenFreeze = false;
+            this.loading = false;
+            console.log(err);
+          }, 100);
+        });
+    },
+
+    async GetAllDepartments() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      if (this.isperent == "true") {
+        this.$http.mailService
+          .AllDepartments_and_mysections(
+            localStorage.getItem("current_department_id"),
+          )
+          .then((res) => {
+            this.departments = res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        this.$http.mailService
+          .AllDepartments_and_mysections(
+            localStorage.getItem("perent_id"),
+            //    .get_department_and_sections(
+            //   localStorage.getItem("current_department_id")
+          )
+          .then((res) => {
+            this.departments = res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
+
+    async ResharedMailWithAnotherDep() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.screenFreeze = true;
+      this.loading = true;
+
+      this.$http.mailService
+        .ResharedMailWithAnotherDep(
+          Number(this.mailId_to_get_mail_by_id),
+          Number(this.realated_departmentIdSelected),
+          Number(this.my_department_id),
+          Number(this.my_user_id),
+        )
+        .then((res) => {
+          this.screenFreeze = false;
+          this.loading = false;
+
+          this.show_senders(
+            this.mailId_to_get_mail_by_id,
+            this.to_test_passing_mail_type_to_get_mail_by_id,
+            this.show_senders_mail,
+            this.resend_from_to_show,
+            this.measure_id1,
+          );
+
+          this.realated_departmentIdSelected = "";
+          this.realated_departmentNameSelected = "";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+
+
+    select_realated_department(id, name) {
+      this.realated_departmentNameSelected = name;
+      this.realated_departmentIdSelected = id;
+    },
+
+    selectdepartment(id, name) {
+      this.departmentNameSelected = name;
+      this.departmentIdSelected = id;
+    },
+
+    async GetAllSides() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.mailService
+        .AllSides()
+        .then((res) => {
+          this.sides = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    selectsides(id, name) {
+      this.sideNameSelected = name;
+      this.sideIdSelected = id;
+    },
+
+    async GetAllMeasures() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.mailService
+        .AllMeasures()
+        .then((res) => {
+          this.measures = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    selectmeasure(id, name) {
+      this.measureNameSelected = name;
+      this.measureIdSelected = id;
+    },
+
+    async GetAllmail_cases() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.mailService
+        .AllStateInbox()
+        .then((res) => {
+          this.mail_cases = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    select_mail_case(id, name) {
+      this.mail_caseNameSelected = name;
+      this.mail_caseIdSelected = id;
+    },
+
+    async GetAllClassifications() {
+      const token = await ensureAccessToken();
+      if (!token) return;
+
+      this.$http.mailService
+        .AllClassifications()
+        .then((res) => {
+          this.classifications = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    selectClassification(id, name) {
+      this.classificationNameSelected = name;
+      this.classificationIdSelected = id;
+    },
+  },
+  // add_to_array_of_side_measure(){
+  //     this.consignees.push({
+  //         departmentId : this.departmentIdSelected,
+  //         departmentName : this.departmentNameSelected,
+
+  //     })
+  // },
+};
+</script>
+
+<style>
+.VuePagination__count {
+  display: none;
+}
+
+.VuePagination {
+  width: 100%;
+}
+
+.VuePagination nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+}
+
+.page-link {
+  background-color: red;
+}
+
+.page-link {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
+  font-size: 0.75rem;
+  /* line-height: 1.25rem; */
+
+  font-weight: 500;
+  border-width: 1px;
+
+  --tw-border-opacity: 0;
+  border-color: rgba(209, 213, 219, var(--tw-border-opacity));
+
+  --tw-bg-opacity: 1;
+  background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
+
+  --tw-text-opacity: 1;
+  color: rgba(0, 0, 0, var(--tw-text-opacity));
+}
+
+.page-link:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(52, 211, 153, var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgba(255, 255, 255, var(--tw-text-opacity));
+}
+
+.active {
+  background-color: rgba(16, 185, 129);
+  color: #fff;
+}
+
+.VuePagination nav ul {
+  padding-top: 0.3rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 250px; /* صغرت الصورة */
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* تقليل المسافة بين العناصر */
+  margin-top: 5px; /* تقليل المسافة بين الصورة والعداد */
+  font-size: 14px; /* حجم أصغر للعداد */
+}
+
+@media print {
+  /* استهداف ديف العلامة المائية داخل حاوية الطباعة وإخفاؤه */
+  #print_reply_doc_n .pointer-events-none {
+    display: none !important;
+  }
+
+  /* إذا أردت التأكد من إخفاء أي نص شفاف آخر */
+  .select-none {
+    display: none !important;
+  }
+
+  /* #print_reply_doc_n img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+  } */
+}
+</style>

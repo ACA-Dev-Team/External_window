@@ -26,6 +26,11 @@ const options = {
 };
 Vue.use(VueHtmlToPaper, options);
 
+
+import { VueRecaptcha } from 'vue-recaptcha'; 
+
+Vue.component('vue-recaptcha', VueRecaptcha);
+
 Vue.prototype.$http = DataService;
 Vue.prototype.$authenticatedUser = {
   userId: "",

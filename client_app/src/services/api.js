@@ -5,12 +5,12 @@ import router from "../router";
  * الرابط الأساسي للسيرفر (Back-End).
  * تم ضبطه على المنفذ 82 بناءً على إعدادات النشر الخاصة بك.
  */
-//const API_BASE = 'http://mail.aca.ly:82';
+//const API_BASE = "http://mail.aca.ly:82";
 /**
  * تم ضبطه على إعدادات اتطوير الخاصة بك.
  */
- const API_BASE = "http://localhost:58316";
-
+//const API_BASE = "http://localhost:44386";
+const API_BASE = "http://localhost:58316";
 // نسخة Axios للطلبات العامة التي تحتاج توكن وتحتوي على Interceptors
 const api = axios.create({
   baseURL: API_BASE,
@@ -60,7 +60,7 @@ export async function refreshAccessToken() {
   if (!refreshToken) throw new Error("No refresh token available");
 
   // يرسل الطلب إلى AuthController/Refresh في الباك-إند (منفذ 96)
-  return plainAxios.post("/api/Auth/Refresh", { refreshToken });
+  return plainAxios.post("/api/external/auth/Refresh", { refreshToken });
 }
 
 /**
@@ -75,7 +75,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 /**
@@ -131,7 +131,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

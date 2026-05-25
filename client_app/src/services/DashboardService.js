@@ -23,6 +23,11 @@ export default {
      //   return axios.get(`http://mail:82/api/DashBords/GetTotal?ManagementId=${id}`);
     },
 
+
+    GetTotal(ManagementId){
+
+      return api.get(`/api/external/messages/GetTotal?ManagementId=${ManagementId}`);
+    }
     
     
 }
