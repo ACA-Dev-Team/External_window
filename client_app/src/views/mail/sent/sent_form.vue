@@ -4392,10 +4392,10 @@ export default {
       });
 
       this.sector_side_new_array.push({
-        mail_forwarding: 2,
-        side_number: 1,
+        mail_forwarding:  Number(localStorage.getItem("section_type")),
+        side_number: Number(localStorage.getItem("section_id")),
         side_name: "تجربة جهة",
-        sector_number: 1,
+        sector_number: Number(localStorage.getItem("section_parent")),
         sector_name: "تجربة قطاع",
       });
 
@@ -4457,7 +4457,7 @@ export default {
             Mail_Summary: this.summary,
             // clasification: Number(this.classification),
             // Genaral_inbox_Number: Number(this.general_incoming_number),
-            // Genaral_inbox_year: Number(this.genaral_inbox_year),
+             Genaral_inbox_year: Number(this.genaral_inbox_year),
             // old_mail_number: this.old_mail_number,
             ActionRequired: this.required_action,
             // office_type: this.office_type,

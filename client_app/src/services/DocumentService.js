@@ -12,7 +12,7 @@ export default {
   
 
   show_doc_for_order(id) {
-    return api.get(`/api/Resources/GetSingleImage?id=${id}`);
+    return api.get(`/api/Resources/GetSingleImage?id=${id}`,{});
     //   return api.post(`http://mail:82/api/Documents/AddDocuments`, newDocuments)
   },
 

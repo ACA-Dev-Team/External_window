@@ -17,7 +17,7 @@
             </div>
 
             <!-- حاوية الإحصائيات -->
-            <section class="grid grid-cols-1 xl:grid-cols-2 gap-10  mt-28">
+            <section class="grid grid-cols-1 gap-10  mt-28">
               
               <!-- قسم الصادر -->
               <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 animate-fade-in-up" style="animation-delay: 0.1s;">

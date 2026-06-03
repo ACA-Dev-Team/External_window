@@ -225,7 +225,12 @@ export default {
 
             localStorage.setItem("dep_type", res.data.find.officeOrdirectorate);
 
+            
+             localStorage.setItem("section_id", res.data.find.section_id);
+             localStorage.setItem("section_parent", res.data.find.section_parent);
+             localStorage.setItem("section_type", res.data.find.section_type);
 
+             
             sessionStorage.setItem("dep_name2", this.user.parent_name);
 
 

@@ -40,7 +40,7 @@ return api.post(`/api/Alert/Add`, ad)
 
      stop_ads(AlertId){
 
-      return api.put(`/api/Alert/Delete?AlertId=${AlertId}`)
+      return api.put(`/api/Alert/Delete?AlertId=${AlertId}`,{})
      },
 
         update_ads(ad){

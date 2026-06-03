@@ -25,7 +25,7 @@ export default {
     },
 
     stop_sector(id) {
-        return api.put(`/api/ExtrmalSection/Delete?id=${id}`)
+        return api.put(`/api/ExtrmalSection/Delete?id=${id}`,{})
        
     },
 

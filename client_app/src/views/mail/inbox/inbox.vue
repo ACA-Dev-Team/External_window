@@ -45,7 +45,7 @@
                 </span>
               </div>
 
-         <div></div>
+         
             </div>
 
             <div class="mt-4 flex">
@@ -644,13 +644,13 @@
                 <div
                   class="flex justify-between bg-gray-100 w-full text-right text-sm pl-2 mt-2"
                 >
-                  <div class="w-3/12 py-1 pr-1">اسم الإدارة</div>
+                  
 
-                  <div class="w-2/12 py-1">وقت الإرسال</div>
-                  <div class="w-2/12 py-1">تاريخ الرد</div>
+                  <div class="w-3/12 py-1">وقت الإرسال</div>
+                  <div class="w-3/12 py-1">تاريخ الرد</div>
 
                   <div class="w-2/12 py-1">الحالة</div>
-                  <div class="w-2/12 py-1">وقت القراءة</div>
+                  <div class="w-3/12 py-1">وقت القراءة</div>
                   <div class="w-1/12 py-1">الإجراء</div>
                 </div>
 
@@ -686,15 +686,12 @@
                       "
                       class="flex w-full text-right"
                     >
+                      
                       <div class="w-3/12 py-1">
-                        {{ sender.department_name }}
-                      </div>
-
-                      <div class="w-2/12 py-1">
                         {{ sender.time_of_send }}
                       </div>
 
-                      <div class="w-2/12 py-1">
+                      <div class="w-3/12 py-1">
                         {{ sender.date_read }}
                       </div>
 
@@ -702,7 +699,7 @@
                         {{ sender.state }}
                       </div>
 
-                      <div class="w-2/12 py-1">
+                      <div class="w-3/12 py-1">
                         {{ sender.time_of_read }}
                       </div>
 
@@ -1188,7 +1185,7 @@
               class="bg-gray-100 rounded-md p-6 mt-16"
             >
               <p class="block text-sm font-semibold text-gray-800">
-                ردود - {{ departmentName }}
+                ردود 
               </p>
 
               <div

@@ -7,6 +7,11 @@ module.exports = {
         "./index.html",
         "./src/**/*.{vue,js,ts,jsx,tsx}",
     ],
+
+    purge: [
+    './index.html',
+    './src/**/*.{vue,js,ts,jsx,tsx}', // يحدد كافة ملفات الـ Vue والـ JS في مشروعك
+  ],
     theme: {
         fontFamily: {
             'sans': ['Tajawal'],

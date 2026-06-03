@@ -5,28 +5,25 @@ import api from "./api";
 export default {
   Edit_Mail_Done(departmetidint, User_id, mail_id, mail_is_done, memberid) {
     return api.post(
-      `/api/MemberReply/Edit_Mail_Done?departmetid=${departmetidint}&&User_id=${User_id}&&mail_id=${mail_id}&&mail_is_done=${mail_is_done}&&memberid=${memberid}`
-    );
+      `/api/MemberReply/Edit_Mail_Done?departmetid=${departmetidint}&User_id=${User_id}&mail_id=${mail_id}&mail_is_done=${mail_is_done}&memberid=${memberid}`
+   ,{} );
   },
 
   get_res_for_reply(rep_id) {
     return api.get(`/api/MemberReply/reply/${rep_id}/images`);
   },
 
-  DeleteReply(id, userid) {
-    return api.put(`/api/MemberReply/DeleteReply?id=${id}&&UserId=${userid}`);
-  },
-
+ 
   
 
  Contarct_State(SendToId, State) {
-    return api.put(`/api/Mail/Contarct_State?SendToId=${SendToId}&&State=${State}`);
+    return api.put(`/api/Mail/Contarct_State?SendToId=${SendToId}&State=${State}`,{});
   },
 
 
   
      Signiture_State(SendToId, State,SendOrRecieve,mailId) {
-    return api.put(`/api/Mail/Signiture_State?SendToId=${SendToId}&&State=${State}&SendOrRecieve=${SendOrRecieve}&mailId=${mailId}`);
+    return api.put(`/api/Mail/Signiture_State?SendToId=${SendToId}&State=${State}&SendOrRecieve=${SendOrRecieve}&mailId=${mailId}`,{});
   },
 
   
@@ -38,19 +35,19 @@ export default {
 
   GetRepliesBySend(sendNumber, memberid, dep) {
     return api.get(
-      `/api/MemberReply/GetRepliesBySend?sendNumber=${sendNumber}&&memberid=${memberid}&&dep=${dep}`
+      `/api/MemberReply/GetRepliesBySend?sendNumber=${sendNumber}&memberid=${memberid}&dep=${dep}`
     );
   },
 
   GetMilMembers(mailid, dep) {
     return api.get(
-      `/api/MemberReply/GetMilMembers?mailid=${mailid}&&dep=${dep}`
+      `/api/MemberReply/GetMilMembers?mailid=${mailid}&dep=${dep}`
     );
   },
 
   ReplyReaded(mail_id, my_department_Id, dep_id, userId, type, sends_id) {
     return api.put(
-      `/api/ExternalMails/ReplyReaded?mail_id=${mail_id}&&my_department_Id=${my_department_Id}&&dep_id=${dep_id}&&userId=${userId}&&type=${type}&&SendToId=${sends_id}`
+      `/api/ExternalMails/ReplyReaded?mail_id=${mail_id}&my_department_Id=${my_department_Id}&dep_id=${dep_id}&userId=${userId}&type=${type}&SendToId=${sends_id}`,{}
     );
   },
 
@@ -74,7 +71,7 @@ export default {
   },
 
   delete_reply(id, userid) {
-    return api.put(`/api/external/messages/DeleteReply?id=${id}&&UserId=${userid}`);
+    return api.put(`/api/external/messages/DeleteReply?id=${id}&UserId=${userid}`,{});
   },
 
   cancel_sending_to_sector_side(id, userId) {
@@ -84,7 +81,7 @@ export default {
 
   testsss(page_num) {
     return api.get(
-      `/api/ExternalMails/GetMail?userid=5&mailNumType=0&mangment=1&date_from=2021-11-04&date_to=2023-01-07&Replay_Date=false&mailnum=&genral_incoming_num=&summary=&Department_filter=&&TheSection=&Measure_filter=&Classfication=&mail_state=&page_num=${page_num}&page_size=5`
+      `/api/ExternalMails/GetMail?userid=5&mailNumType=0&mangment=1&date_from=2021-11-04&date_to=2023-01-07&Replay_Date=false&mailnum=&genral_incoming_num=&summary=&Department_filter=&TheSection=&Measure_filter=&Classfication=&mail_state=&page_num=${page_num}&page_size=5`
     );
 
     //  return api.get(`http://mail:82/api/Mail/GetMailById?id=${id}&type=${type}`);
@@ -112,13 +109,13 @@ export default {
 
   Send_resend(mailId, userId, department_id1) {
     return api.put(
-      `/api/Resend/SendResendMail?mail_id=${mailId}&user_id=${userId}&department_id=${department_id1}`
+      `/api/Resend/SendResendMail?mail_id=${mailId}&user_id=${userId}&department_id=${department_id1}`,{}
     );
     //  return api.put(`http://mail:82/api/Mail/Send?mailid=${mailId}&userId=${userId}`)
   },
 
   SendMail(mailId, userId) {
-    return api.put(`/api/external/messages/Send?mailid=${mailId}&userId=${userId}`);
+    return api.put(`/api/external/messages/Send?mailid=${mailId}&userId=${userId}`,{});
     //  return api.put(`http://mail:82/api/Mail/Send?mailid=${mailId}&userId=${userId}`)
   },
 
@@ -143,7 +140,7 @@ export default {
 
   cancel_sending_to_department_resend(sends_id, section_id, userId) {
     return api.put(
-      `/api/Resend/DeleteSections?sends_to_id=${sends_id}&section_note_id=${section_id}&userId=${userId}`
+      `/api/Resend/DeleteSections?sends_to_id=${sends_id}&section_note_id=${section_id}&userId=${userId}`,{}
     );
     //  return api.delete(`http://mail:82/api/Mail/DeleteMangament?mail_id=${mailId}&departmentId=${department_id}&userId=${userId}`);
   },
@@ -167,7 +164,7 @@ export default {
     page_size
   ) {
     return api.get(
-      `/api/ExternalMails/GetIncomingMemberMail?SectionNumber=${section_id}&&userid=${id}&mailNumType=${mailType}&d1=${date_from}&d2=${date_to}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&entity_reference_number=${s_number}&pagenum=${page_num}&size=${page_size}`
+      `/api/ExternalMails/GetIncomingMemberMail?SectionNumber=${section_id}&userid=${id}&mailNumType=${mailType}&d1=${date_from}&d2=${date_to}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&entity_reference_number=${s_number}&pagenum=${page_num}&size=${page_size}`
     );
     //     &resend_mail=${redirection}               return api.get(`http://mail:82/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
   },
@@ -200,7 +197,7 @@ export default {
     page_size
   ) {
     return api.get(
-      `/api/external/messages/GetIncomingMail?membermail=${member_id}&&userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&resend_mail=${redirection}&done=${done_mail}&not_done=${not_done}&CheckNewReplay=${new_reply}&MemberMailIsDone=${MemberMailIsDone}&sig_state=${sig_filter}&contarct_state=${contarct_state}&page_num=${page_num}&page_size=${page_size}`
+      `/api/external/messages/GetIncomingMail?membermail=${member_id}&userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&resend_mail=${redirection}&done=${done_mail}&not_done=${not_done}&CheckNewReplay=${new_reply}&MemberMailIsDone=${MemberMailIsDone}&sig_state=${sig_filter}&contarct_state=${contarct_state}&page_num=${page_num}&page_size=${page_size}`
     );
     //     &resend_mail=${redirection}               return api.get(`http://mail:82/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
   },
@@ -229,7 +226,7 @@ export default {
     page_size
   ) {
     return api.get(
-      `/api/ExternalMails/NewReplay?membermail=${member_id}&&userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&resend_mail=${redirection}&done=${done_mail}&not_done=${not_done}&page_num=${page_num}&page_size=${page_size}`
+      `/api/ExternalMails/NewReplay?membermail=${member_id}&userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&resend_mail=${redirection}&done=${done_mail}&not_done=${not_done}&page_num=${page_num}&page_size=${page_size}`
     );
     //     &resend_mail=${redirection}               return api.get(`http://mail:82/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
   },
@@ -258,14 +255,14 @@ export default {
     page_size
   ) {
     return api.get(
-      `/api/external/messages/GetMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&office_type=${certified}&done=${done_mails}&not_done=${not_done}&sig_state=${sig_state}&page_num=${page_num}&page_size=${page_size}`
+      `/api/external/messages/GetMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&office_type=${certified}&done=${done_mails}&not_done=${not_done}&sig_state=${sig_state}&page_num=${page_num}&page_size=${page_size}`
     );
-    //  return api.get(`http://mail:82/api/ExternalMails/GetMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
+    //  return api.get(`http://mail:82/api/ExternalMails/GetMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
   },
 
   read_it_mail(id, department_id, userId) {
     return api.put(
-      `/api/ExternalMails/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`
+      `/api/ExternalMails/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`,{}
     );
     //   return api.put(`http://mail:82/api/ExternalMails/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`);
   },
@@ -291,7 +288,7 @@ export default {
 
   GetMailSubId(MailID, DepartmentId, UserId) {
     return api.get(
-      `/api/Reply/GetMailSubId?MailID=${MailID}&DepartmentId=${DepartmentId}&&UserId=${UserId}`
+      `/api/Reply/GetMailSubId?MailID=${MailID}&DepartmentId=${DepartmentId}&UserId=${UserId}`
     );
     //  return api.get(`http://mail:82/api/Reply/GetReplyById?department_id=${department}&mail_id=${mail}`);
   },
@@ -311,7 +308,7 @@ export default {
 
   show_senders(id, my_dep) {
     return api.get(
-      `/api/external/messages/GetDetalies?mail_id=${id}&&department_id=${my_dep}`
+      `/api/external/messages/GetDetalies?mail_id=${id}&department_id=${my_dep}`
     );
     //  return api.get(`http://mail:82/api/Mail/GetDetalies?mail_id=${id}`);
   },
@@ -338,13 +335,13 @@ export default {
 
   get_department_for_reply(departmentId, mydep, mailId, fromwhere) {
     return api.get(
-      `/api/Department/DepatmentswhoCanResendReplyTo?departmentId=${departmentId}&&mydep=${mydep}&&mailId=${mailId}&&fromwhere=${fromwhere}`
+      `/api/Department/DepatmentswhoCanResendReplyTo?departmentId=${departmentId}&mydep=${mydep}&mailId=${mailId}&fromwhere=${fromwhere}`
     );
   },
 
   get_department_for_reply2(departmentId, mailId) {
     return api.get(
-      `/api/MemberReply/GetMemberDepartment?mydep=${departmentId}&&mailId=${mailId}`
+      `/api/MemberReply/GetMemberDepartment?mydep=${departmentId}&mailId=${mailId}`
     );
   },
 
@@ -361,14 +358,14 @@ export default {
   
   GetRelatedDepartments(mailId, departmentId) {
     return api.get(
-      `/api/Department/GetRelatedDepartments?mailId=${mailId}&&departmentId=${departmentId}`
+      `/api/Department/GetRelatedDepartments?mailId=${mailId}&departmentId=${departmentId}`
     );
     //  return api.get(`http://mail:82/api/WeatherForecast/GetAllDepartments`);
   },
 
   ResharedMailWithAnotherDep(Mail_id, depid, mydep, userid) {
     return api.post(
-      `/api/Resend/ResharedMailWithAnotherDep?Mail_id=${Mail_id}&depid=${depid}&mydep=${mydep}&userid=${userid}`
+      `/api/Resend/ResharedMailWithAnotherDep?Mail_id=${Mail_id}&depid=${depid}&mydep=${mydep}&userid=${userid}`,{}
     );
   },
 
@@ -379,7 +376,7 @@ export default {
 
   AllDepartments_and_mysections22(dep_id, mai_id) {
     return api.get(
-      `/api/Department/ResendToallDepartmentAndMysections?dep=${dep_id}&&mailId=${mai_id}`
+      `/api/Department/ResendToallDepartmentAndMysections?dep=${dep_id}&mailId=${mai_id}`
     );
     //  return api.get(`http://mail:82/api/WeatherForecast/GetAllDepartments`);
   },
@@ -401,7 +398,7 @@ export default {
 
   GetInboxMailById(id, department, type, sends) {
     return api.get(
-      `/api/external/messages/GetMailInfo?mail_id=${id}&Department_Id=${department}&type=${type}&&sends=${sends}`
+      `/api/external/messages/GetMailInfo?mail_id=${id}&Department_Id=${department}&type=${type}&sends=${sends}`
     );
     //  return api.get(`http://mail:82/api/WeatherForecast/GetMailInfo?mail_id=${id}&Department_Id=${department}&type=${type}`,);
   },
@@ -503,7 +500,7 @@ export default {
 
   mail_done(dep_id, user_id, mail_id, mail_done) {
     return api.post(
-      `/api/Reply/ReplayIsDone?departmetid=${dep_id}&User_id=${user_id}&mail_id=${mail_id}&mail_is_done=${mail_done}`
+      `/api/Reply/ReplayIsDone?departmetid=${dep_id}&User_id=${user_id}&mail_id=${mail_id}&mail_is_done=${mail_done}`,{}
     );
     //  return api.post(`http://mail:82/api/Resources/print?mail_id=${id}&userId=${userId}&type=${type}`,);
   },
@@ -515,7 +512,7 @@ export default {
 
   PrintOrShowDocument(id, userId, type) {
     return api.post(
-      `/api/Resources/print?mail_id=${id}&userId=${userId}&type=${type}`
+      `/api/Resources/print?mail_id=${id}&userId=${userId}&type=${type}`,{}
     );
     //  return api.post(`http://mail:82/api/Resources/print?mail_id=${id}&userId=${userId}&type=${type}`,);
   },
@@ -579,7 +576,7 @@ export default {
 
   StopPublicAdministrations(stop_PublicAdministrations) {
     return api.put(
-      `/api/Department/change_state?StopActive=${stop_PublicAdministrations}`
+      `/api/Department/change_state?StopActive=${stop_PublicAdministrations}`,{}
     );
     //  return api.put(`http://mail:82/api/Administrator/Delete/`, StopActive)
   },
@@ -607,12 +604,12 @@ export default {
   },
 
   BossSee(mailId) {
-    return api.put(`/api/Mails/BossSee?mailId=${mailId}`);
+    return api.put(`/api/Mails/BossSee?mailId=${mailId}`,{});
     //  return api.put(`http://mail:82/api/Mails/BossSee?mailId=${mailId}`,);
   },
 
   EmploySee(mailId) {
-    return api.put(`/api/Mails/EmploySee?mailId=${mailId}`);
+    return api.put(`/api/Mails/EmploySee?mailId=${mailId}`,{});
     //   return api.put(`http://mail:82/api/Mails/EmploySee?mailId=${mailId}`,);
   },
 

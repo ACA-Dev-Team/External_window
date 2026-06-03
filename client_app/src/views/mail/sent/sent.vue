@@ -460,7 +460,7 @@
 
                   <div
                   
-                    class="h-64  text-sm bg-gray-100"
+                    class="min-h-64   text-sm bg-gray-100"
                   >
                     <div
                       v-for="mail in inboxMails"
@@ -849,7 +849,7 @@
 
 
                 <p class="block text-sm font-semibold text-gray-800 ml-6">
-                  ردود - {{ departmentName }}
+                  ردود 
                 </p>
 
 
