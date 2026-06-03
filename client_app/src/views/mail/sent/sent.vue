@@ -2360,15 +2360,7 @@ import Swal from "sweetalert2";
 export default {
   created() {},
 
-  destroyed() {
-    console.log("destroyed_sent.vue");
-    if (this.conn != null) {
-      if (this.conn.readystate != 3) {
-        this.conn.close();
-        this.conn = null;
-      }
-    }
-  },
+
 
   async mounted() {
 
@@ -2981,7 +2973,7 @@ export default {
     nextImage1() {
       if (this.currentIndex < this.reply_image_of_doc.length - 1) {
         this.currentIndex++;
-        console.log("dddd");
+        
       }
     },
     prevImage1() {
@@ -3077,22 +3069,7 @@ export default {
         });
     },
 
-    // async GetRelatedDepartments() {
-    //   const token = await ensureAccessToken();
-    //   if (!token) return;
-
-    //   this.$http.mailService
-    //     .GetRelatedDepartments(
-    //       this.mailId_to_get_mail_by_id,
-    //       Number(this.my_department_id)
-    //     )
-    //     .then((res) => {
-    //       this.realated_departments = res.data;
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
+  
 
     select_realated_department(id, name) {
       this.realated_departmentNameSelected = name;
@@ -3370,7 +3347,7 @@ export default {
       if (!this.isdone) {
         this.isdonetext = true;
         this.isdone2 = true;
-        console.log("111111111");
+      
       }
     },
 
@@ -3412,9 +3389,7 @@ export default {
             .NewAddReply(ReplyViewModel)
             .then((res) => {
               setTimeout(() => {
-                console.log(res);
-                // this.documentSection = true;
-                // this.proceduresSection = true;
+             
                 this.loading = false;
                 this.screenFreeze = false;
                 this.reply_to_add = "";
@@ -3430,16 +3405,10 @@ export default {
                   }
                 }
 
-                // this.GetReplyByDepartment(
-                //   this.replyByDepartmenId,
-                //   this.sends_id,
-                //   this.departmentName
-                // );
-
-                //**************9/3/2023
+          
                 var cou = Math.ceil(this.imagesToSend.length / 50);
                 if (cou > 1) {
-                  console.log("cou=" + cou);
+                
                   var id_of_reply_from_beackend = res.data.replyid; //101
                   this.update_reply_to_complet_sent_img(
                     1,
@@ -3477,12 +3446,6 @@ export default {
         });
     },
 
-    //*************added function change_date
-    // change_date(){
-    //   console.log("ch_change");
-    //   this.GetSentMail();
-    // },
-    //**********end function change_date
 
     search_reset() {
       this.mail_id = "";
@@ -3821,118 +3784,6 @@ export default {
         });
     },
 
-    reply1() {
-      if (this.conn == null) {
-        console.log("conn=" + this.conn);
-        // this.conn = new WebSocket("ws://localhost:58316/ws");
-        this.conn = new WebSocket("ws://mail:82/ws");
-        //   this.conn = new WebSocket("ws://mail:96/ws");
-
-        this.conn.onclose = (event) => {
-          console.log("close code_sent.vue=" + event.code);
-        };
-
-        this.conn.onmessage = (event) => {
-          console.log("onmessage send.vue");
-          let scannedImage = event.data;
-
-          let mgs = JSON.parse(scannedImage);
-          this.imagesscantest = mgs;
-          var ind = this.imagesscantest.index;
-          console.log(" send.vue index=" + ind);
-          if (ind == 1) {
-            this.keyid = this.imagesscantest.keyid;
-            console.log("send.vue keyid=" + this.keyid);
-            console.log("count websocket_sent=" + this.imagesscantest.count1);
-          } else {
-            console.log("send.vue else");
-            for (var i = 0; i < mgs["image"].length; i++) {
-              //***13/12/2024
-
-              //  this.indexOfimagesToShow++;
-              // this.imagesToSend.push({
-              //   baseAs64: mgs["image"][i],
-              //  index: this.indexOfimagesToShow,
-              //    department_id:Number(this.my_department_id),
-              //  });
-
-              console.log("sent_order sor sent");
-              this.imagesToSend.push({
-                baseAs64: mgs.image[i].img,
-                index: mgs.image[i].num_img,
-                department_id: Number(this.my_department_id),
-              });
-              //*******end 13/12/2024
-            }
-          }
-        };
-      } else if (this.conn.readyState === 3 || this.conn.readyState === 2) {
-        console.log("readystate=" + this.conn.readyState);
-        this.conn.close();
-        this.conn = null;
-        this.reply1();
-      } else {
-        //       var link = document.getElementById("a3");
-        var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
-        var sends_id = this.sends_id;
-        var my_department_id_to_get_mail_by_id =
-          this.my_department_id_to_get_mail_by_id;
-        var keyid = this.keyid;
-        console.log("keyid_sent=" + keyid);
-
-        var timeout;
-        window.addEventListener("blur", function (e) {
-          window.clearTimeout(timeout);
-        });
-
-        timeout = window.setTimeout(function () {
-          window.location = "http://mail/scanner_app8/SetupNew.msi";
-        }, 1000);
-        document.location =
-          "Stage2Scaner:flag=0" +
-          "userId=" +
-          localStorage.getItem("AY_LW") +
-          "mId=" +
-          mailId_to_get_mail_by_id +
-          "send_ToId=" +
-          sends_id +
-          "to=" +
-          my_department_id_to_get_mail_by_id +
-          "keyid=" +
-          keyid;
-      }
-      //******21/1/2023
-      /*var link = document.getElementById("a3");
-      var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
-      var sends_id = this.sends_id;
-      var my_department_id_to_get_mail_by_id =
-        this.my_department_id_to_get_mail_by_id;
-      var keyid = this.keyid;
-
-      var timeout;
-      window.addEventListener("blur", function (e) {
-        window.clearTimeout(timeout);
-      });
-
-      timeout = window.setTimeout(function () {
-        window.location = "http://mail/scanner_app/Setup1.msi";
-      }, 1000);
-
-      link.href =
-        "SScaner:flag=0" +
-        "userId=" +
-        localStorage.getItem("AY_LW") +
-        "mId=" +
-        mailId_to_get_mail_by_id +
-        "send_ToId=" +
-        sends_id +
-        "to=" +
-        my_department_id_to_get_mail_by_id +
-        "keyid=" +
-        keyid;*/
-      //************21/1/2023
-    },
-
     async print_image() {
       const token = await ensureAccessToken();
       if (!token) return;
@@ -3946,7 +3797,7 @@ export default {
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+          
             this.loading = false;
             this.screenFreeze = false;
           }, 500);
@@ -4086,10 +3937,7 @@ export default {
         .NewAddReply(ReplyViewModel)
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
-            // this.documentSection = true;
-            // this.proceduresSection = true;
-
+          
             this.loading = false;
             this.screenFreeze = false;
 
@@ -4172,9 +4020,7 @@ export default {
         .NewAddReply(ReplyViewModel)
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
-            // this.documentSection = true;
-            // this.proceduresSection = true;
+           
             this.loading = false;
             this.screenFreeze = false;
             this.reply_to_add = "";
@@ -4194,7 +4040,7 @@ export default {
                     this.senders[index].flag = 5;
                     this.senders[index].state = "تم الرد من قبلك";
                   }
-                  console.log("5555555555555555");
+                  
                 }
               }
 
@@ -4223,7 +4069,7 @@ export default {
                     this.senders[index].state = "تم الرد من قبلك";
                   }
                 }
-                console.log("5555555555555555");
+               
               }
 
               for (let index = 0; index < this.inboxMails.length; index++) {
@@ -4250,7 +4096,7 @@ export default {
             //**************9/3/2023
             var cou = Math.ceil(this.imagesToSend.length / 50);
             if (cou > 1) {
-              console.log("cou=" + cou);
+              
               var id_of_reply_from_beackend = res.data.replyid; //101
               this.update_reply_to_complet_sent_img(
                 1,
@@ -4288,7 +4134,7 @@ export default {
       const token = await ensureAccessToken();
       if (!token) return;
 
-      console.log("update_reply ii=" + ii);
+    
 
       if (ii < count1) {
         var a1 = a2;
@@ -4317,7 +4163,7 @@ export default {
           .update_replay(ReplyViewModel)
           .then((res) => {
             setTimeout(() => {
-              console.log(res);
+              
 
               for (let index = 0; index < this.senders.length; index++) {
                 if (this.senders[index].send_ToId == this.sends_id) {

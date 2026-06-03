@@ -5,7 +5,7 @@
       <!-- شعار المنظومة -->
       <div class="pt-8 pb-4">
         <img class="mx-auto h-32 w-auto object-contain" src="../../assets/img/logo-aca.png" alt="logo" />
-        <h2 class="mt-4 text-center text-2xl font-extrabold text-gray-900">منظومة التراسل الخارجي</h2>
+        <h2 class="mt-4 text-center text-2xl font-extrabold text-gray-900">منظومة البريد الخارجي</h2>
         <p class="text-center text-sm text-gray-500 mt-1">{{ currentTitle }}</p>
       </div>
 
@@ -205,7 +205,7 @@ export default {
             // this.screenFreeze = false;
 
             this.loginSuccess = true;
-            console.log(res.data);
+           
 
             this.user = res.data.find;
 

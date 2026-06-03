@@ -597,7 +597,7 @@
                     <!--  :href="$router.resolve({ name: 'sent-add' }).href" -->
 
                     <button
-                      v-if="summary && classification"
+                      v-if="summary "
                       @click="clear_page()"
                       class="flex justify-center items-center py-2 px-8 border border-transparent shadow-sm text-sm font-medium rounded-md border-green-600 text-green-600 hover:shadow-lg focus:shadow-none duration-300 focus:outline-none"
                     >
@@ -1782,17 +1782,7 @@ import { ensureAccessToken } from "@/services/tokenHelper";
 export default {
   created() {},
 
-  destroyed() {
-    console.log("destroyed_send_form");
-    if (this.conn != null) {
-      if (this.conn.readystate != 3) {
-        console.log("readystate destory_sent_form=" + this.conn.readyState);
-        this.conn.close();
-        console.log("close_sent_form");
-        this.conn = null;
-      }
-    }
-  },
+
   components: {
     asideComponent,
     navComponent,
@@ -1805,7 +1795,7 @@ export default {
   },
 
   async mounted() {
-    this.GetAllDocuments_signture(),
+   
       window.addEventListener("resize", this.handleResize);
 
     this.user_name33 = localStorage.getItem("user_name");
@@ -2455,26 +2445,7 @@ export default {
         this.$htmlToPaper("print_one_dec_sig");
       }, 200);
 
-      // this.$http.mailService
-      //   .PrintOrShowDocument(
-      //     Number(this.mailId),
-      //     Number(localStorage.getItem("AY_LW")),
-      //     Number(this.from_reply_or_general)
-      //   )
-      //   .then((res) => {
-      //     setTimeout(() => {
-      //       console.log(res);
-      //       this.loading = false;
-      //       this.screenFreeze = false;
-      //     }, 500);
-      //   })
-      //   .catch((err) => {
-      //     setTimeout(() => {
-      //       this.loading = false;
-      //       this.screenFreeze = false;
-      //     }, 500);
-      //     console.log(err);
-      //   });
+ 
     },
 
     show_current_image_for_bigger_screen_sig() {
@@ -2848,8 +2819,7 @@ export default {
       this.$http.documentService
         .save_new_order(this.new_ordering_image_list)
         .then((res) => {
-          // this.ordering_image_list = res.data
-          console.log(res);
+       
           this.show_model_to_order_image = false;
 
           this.new_ordering_image_list = [];
@@ -2934,9 +2904,7 @@ export default {
         this.$http.documentService
           .show_doc_for_order(this.id_of_image_selected)
           .then((res) => {
-            console.log(res);
-            //     this.total_of_doc = res.data.total;
-
+          
             this.image_ordering = res.data.data.path;
             this.id_image_ordering = res.data.data.id;
 
@@ -2954,28 +2922,7 @@ export default {
     },
 
     add_sector_side_to_array() {
-      // // sector_side
 
-      //     // this.sector_side_new_array_id;
-      //     this.sector_side_new_array.push(
-      //       {
-      //         side_number: this.sideIdSelected,
-      //         side_name: this.sideNameSelected,
-      //         sector_number: this.sectorIdSelected,
-      //         sector_name: this.sectorNameSelected,
-      //       }
-      //     );
-
-      //     this.sector_side_new_array_id.push(this.sideIdSelected)
-
-      //     console.log(this.sector_side_new_array)
-      //     // this.sector_side_new_array_id.push(this.departmentIdSelected);
-
-      //     this.sideIdSelected = "";
-      //     this.sideNameSelected = "";
-
-      //     this.sectorIdSelected = "";
-      //     this.sectorNameSelected = "";
 
       if (
         this.sector_side_new_array_id.includes(this.sideIdSelected) ||
@@ -3010,7 +2957,7 @@ export default {
         this.loading = true;
 
         this.sector_side_from_delet_fun = true;
-        console.log(id);
+        
         this.$http.mailService
           .cancel_sending_to_sector_side(
             id,
@@ -3037,18 +2984,7 @@ export default {
     },
 
     remove_sector_side_from_array(sideId, sideName, sectorId, sectorName) {
-      console.log(this.sector_side_new_array_id.length);
-      console.log(this.sector_side_old_array_id.length);
-
-      console.log(
-        this.sector_side_new_array_id.length +
-          this.sector_side_old_array_id.length,
-      );
-      console.log(
-        this.sector_side_new_array_id.length +
-          this.sector_side_old_array_id.length <
-          1,
-      );
+ 
 
       // if (
       //   this.sector_side_new_array_id.length +
@@ -3377,129 +3313,6 @@ export default {
         });
     },
 
-    //*****************29/3/2022
-    //  func() {
-    // var link = document.getElementById("a1");
-
-    //   var replyByDepartmenId = this.replyByDepartmenId;
-    //   var sends_id = this.sends_id;
-    //   var mailid = this.mailId;
-    //   var keyid = this.keyid;
-
-    //   var timeout;
-    //   window.addEventListener("blur", function(e) {
-    //     window.clearTimeout(timeout);
-    //   });
-
-    //   timeout = window.setTimeout(function() {
-    //     window.location = "http://mail/scanner_app/Setup1.msi";
-    //   }, 1000);
-
-    //   link.href = "SScaner:flag=1" + "mId=" + mailid + "keyid=" + keyid;
-    // },
-
-    func() {
-      console.log("13/1/2025");
-      if (this.conn == null) {
-        console.log("conn=" + this.conn);
-        console.log("ssssssssssssss");
-        // this.conn = new WebSocket("ws://localhost:58316/ws");
-        this.conn = new WebSocket("ws://mail:82/ws");
-        //  this.conn = new WebSocket("ws://mail:96/ws");
-
-        this.conn.onclose = (event) => {
-          console.log("close code_sent_form=" + event.code);
-        };
-
-        this.conn.onmessage = (event) => {
-          console.log("onmessage");
-          let scannedImage = event.data;
-          let mgs = JSON.parse(scannedImage);
-          this.imagesscantest = mgs;
-          var ind = this.imagesscantest.index;
-          console.log("index=" + ind);
-          if (ind == 1) {
-            this.keyid = this.imagesscantest.keyid;
-            //   localStorage.setItem("keyid",this.keyid);
-            console.log("keyid=" + this.keyid);
-            console.log(
-              "count websocket_ sent_form=" + this.imagesscantest.count1,
-            );
-          } else {
-            var flag1 = this.imagesscantest.flag1;
-            if (flag1 == 1) {
-              console.log("flag=" + flag1);
-              this.imagesToSend = [];
-            }
-            for (var i = 0; i < mgs["image"].length; i++) {
-              //******13/12/2024
-              // this.indexOfimagesToShow++;
-              //this.imagesToSend.push({
-              // baseAs64: mgs["image"][i],
-              //  index: this.indexOfimagesToShow,
-              //  department_id: Number(this.my_department_id),
-              // });
-
-              console.log("order index" + mgs.image[i].num_img);
-              this.imagesToSend.push({
-                baseAs64: mgs.image[i].img,
-                index: mgs.image[i].num_img,
-                department_id: Number(this.my_department_id),
-              });
-              //*******End 13/12/2024
-            }
-
-            if (flag1 == 1) {
-              this.UploadImagesMail();
-              console.log("uploadimagemail function   hhhhh");
-            }
-          }
-        };
-      } else if (this.conn.readyState === 3 || this.conn.readyState === 2) {
-        console.log("readystate=" + this.conn.readyState);
-        this.conn.close();
-        this.conn = null;
-        this.func();
-      } else {
-        console.log("functtttttttt");
-        var mailid = this.mailId;
-        var keyid = this.keyid;
-
-        var timeout;
-        window.addEventListener("blur", function (e) {
-          window.clearTimeout(timeout);
-        });
-
-        timeout = window.setTimeout(function () {
-          window.location = "http://mail/scanner_app8/SetupNew.msi";
-        }, 1000);
-
-        document.location =
-          "Stage2Scaner:flag=1" + "mId=" + mailid + "keyid=" + keyid;
-      }
-
-      //21/1/2023
-      /* var link = document.getElementById("a1");
-
-      var replyByDepartmenId = this.replyByDepartmenId;
-      var sends_id = this.sends_id;
-      var mailid = this.mailId;
-      var keyid = this.keyid;
-
-      var timeout;
-      window.addEventListener("blur", function (e) {
-        window.clearTimeout(timeout);
-      });
-
-      timeout = window.setTimeout(function () {
-        window.location = "http://mail/scanner_app/Setup1.msi";
-      }, 1000);
-
-      link.href = "SScaner:flag=1" + "mId=" + mailid + "keyid=" + keyid;*/
-      //end 21/1/2023
-    },
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
 
     async to_get_all_doc_of_mail() {
       const token = await ensureAccessToken();
@@ -3613,7 +3426,7 @@ export default {
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+            
 
             this.show_images_images_model = [];
             this.indextotest = 0;
@@ -4040,10 +3853,7 @@ export default {
         .NewAddReply(ReplyViewModel)
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
-            // this.documentSection = true;
-            // this.proceduresSection = true;
-
+       
             this.loading = false;
             this.screenFreeze = false;
 
@@ -4624,7 +4434,7 @@ export default {
           }
           if (this.to_test_passing_mail_type == "3") {
 
-            console.log("33333333333333333333333hhh")
+           
             this.external_mailId = res.data.external.id;
 
             this.sector_side_old_array = res.data.external_sectoin;
@@ -4979,7 +4789,7 @@ export default {
             this.screenFreeze = false;
 
             this.imagesToSend = [];
-            console.log(res);
+      
 
             this.GetSentMailById();
             this.GetAllDocN("next");

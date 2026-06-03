@@ -339,7 +339,7 @@ export default {
     GetTotal() {
       this.$http.DashboardService.GetTotal(this.my_department_id)
         .then((res) => {
-          console.log(res.data);
+          
           this.Reports = res.data;
 
           
@@ -374,7 +374,7 @@ export default {
         this.date_to,
       )
         .then((res) => {
-          console.log(res.data);
+     
           this.Reports = res.data;
         })
         .catch((err) => {
@@ -388,7 +388,7 @@ export default {
 
       this.$http.DashboardService.NumbersOfReports2(this.my_department_id)
         .then((res) => {
-          console.log(res.data);
+       
           this.Reports2 = res.data;
         })
         .catch((err) => {

@@ -11,8 +11,8 @@ import router from "../router";
  */
 //const API_BASE = "http://localhost:44386";
 
- //const API_BASE = "http://localhost:58316";
-const API_BASE = "https://request.aca.gov.ly";
+ const API_BASE = "http://localhost:58316";
+//const API_BASE = "https://request.aca.gov.ly";
 // نسخة Axios للطلبات العامة التي تحتاج توكن وتحتوي على Interceptors
 const api = axios.create({
   baseURL: API_BASE,

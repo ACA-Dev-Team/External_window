@@ -1522,17 +1522,7 @@ import { ensureAccessToken } from "@/services/tokenHelper";
 export default {
   created() {},
 
-  destroyed() {
-    console.log("destroyed_inbox_form");
-    if (this.conn != null) {
-      if (this.conn.readystate != 3) {
-        console.log("readystate destory_inbox_form=" + this.conn.readyState);
-        this.conn.close();
-        console.log("close_inbox_form");
-        this.conn = null;
-      }
-    }
-  },
+
 
   computed: {
     currentImagesig() {
@@ -1599,9 +1589,9 @@ export default {
   },
 
   async mounted() {
-    this.GetAllBranches();
+   
 
-    this.GetAllDocuments_signture(),
+
       window.addEventListener("resize", this.handleResize);
 
     this.perent_id = localStorage.getItem("perent_id");
@@ -1616,48 +1606,6 @@ export default {
     ) {
       this.$router.push("/");
     }
-
-    //21/1/2023*********************websocket
-    /*  this.conn = new WebSocket("ws://localhost:58316/ws");
-    //  this.conn = new WebSocket("ws://mail:82/ws");
-    console.log("inbox_form websocket connect ok mounted");
-
- 
-
-this.conn.onerror =(error) =>{
-console.log("inbox_form.vue  WebSocket Error " + error);
-};
-
-this.conn.onclose =(event) =>{
-console.log("inbox_form.vue readystate"+this.conn.readyState);
-console.log(" inbox_form.vue WebSocket close");
-console.log("code inbox_form="+event.code);
-
-};
-
-    this.conn.onmessage = (event) => {
-       console.log("inbox_form onmessage mounted ");
-      let scannedImage = event.data;
-      let mgs = JSON.parse(scannedImage);
-      this.imagesscantest = mgs;
-      var ind = this.imagesscantest.index;
-      console.log("inbox_form index="+ind);
-      if (ind == 1) {
-        this.keyid = this.imagesscantest.keyid;
-        console.log("mounted inbox keyid="+this.keyid);
-      } else {
-         console.log("inbox_form.vue else");
-        //this.imagesToSend=[]
-        for (var i = 0; i < mgs["image"].length; i++) {
-          this.indexOfimagesToShow++;
-          this.imagesToSend.push({
-            baseAs64: mgs["image"][i],
-            index: this.indexOfimagesToShow,
-          });
-        }
-      }
-    };*/
-    //****************21/1/20232
 
     this.mailId = this.$route.params.mail;
 
@@ -1689,9 +1637,9 @@ console.log("code inbox_form="+event.code);
 
       await this.getMailById();
 
-      this.GetAllMembers();
+     
 
-      this.GetAllDepartments();
+      
 
       if (this.resended_from == 0) {
         this.GetAllDocN("next");
@@ -2102,7 +2050,7 @@ console.log("code inbox_form="+event.code);
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+           
             this.loading = false;
             this.screenFreeze = false;
           }, 500);
@@ -2726,7 +2674,7 @@ console.log("code inbox_form="+event.code);
     async UploadImagesMail() {
       this.screenFreeze = true;
       this.loading = true;
-      console.log("test test test");
+     
 
       const token = await ensureAccessToken();
       if (!token) return;
@@ -2749,7 +2697,7 @@ console.log("code inbox_form="+event.code);
             this.screenFreeze = false;
 
             this.imagesToSend = [];
-            console.log(res);
+           
 
             this.getMailById();
 
@@ -2768,106 +2716,6 @@ console.log("code inbox_form="+event.code);
         });
     },
 
-    func() {
-      if (this.conn == null) {
-        console.log("conn=" + this.conn);
-        // this.conn = new WebSocket("ws://localhost:58316/ws");
-        this.conn = new WebSocket("ws://mail:82/ws");
-        // this.conn = new WebSocket("ws://mail:96/ws");
-
-        this.conn.onclose = (event) => {
-          console.log("close code_sent_form=" + event.code);
-        };
-
-        this.conn.onmessage = (event) => {
-          console.log("onmessage");
-          let scannedImage = event.data;
-
-          let mgs = JSON.parse(scannedImage);
-          //console.log( "tttt="+mgs.image);
-          this.imagesscantest = mgs;
-          var ind = this.imagesscantest.index;
-          console.log("index=" + ind);
-          if (ind == 1) {
-            this.keyid = this.imagesscantest.keyid;
-            //   localStorage.setItem("keyid",this.keyid);
-            console.log("keyid=" + this.keyid);
-            console.log(
-              "count websocket_ send_form=" + this.imagesscantest.count1,
-            );
-          } else {
-            var flag1 = this.imagesscantest.flag1;
-            if (flag1 == 1) {
-              console.log("flag=" + flag1);
-              this.imagesToSend = [];
-            }
-            for (var i = 0; i < mgs["image"].length; i++) {
-              //****************13/12/2024
-              //  this.indexOfimagesToShow++;
-              // this.imagesToSend.push({
-              //   baseAs64: mgs["image"][i],
-              //   index: this.indexOfimagesToShow,
-              //   department_id:Number(this.my_department_id),
-              //});
-              console.log("order index" + mgs.image[i].num_img);
-              this.imagesToSend.push({
-                baseAs64: mgs.image[i].img,
-                index: mgs.image[i].num_img,
-                department_id: Number(this.my_department_id),
-              });
-              //*******End 13/12/2024
-            }
-
-            if (flag1 == 1) {
-              console.log("uploadimagemail function  inbox_form");
-
-              this.UploadImagesMail();
-            }
-          }
-        };
-      } else if (this.conn.readyState === 3 || this.conn.readyState === 2) {
-        console.log("readystate=" + this.conn.readyState);
-        this.conn.close();
-        this.conn = null;
-        this.func();
-      } else {
-        console.log("func");
-        var mailid = this.mailId;
-        var keyid = this.keyid;
-
-        var timeout;
-        window.addEventListener("blur", function (e) {
-          window.clearTimeout(timeout);
-        });
-
-        timeout = window.setTimeout(function () {
-          window.location = "http://mail/scanner_app8/SetupNew.msi";
-        }, 1000);
-
-        document.location =
-          "Stage2Scaner:flag=1" + "mId=" + mailid + "keyid=" + keyid;
-      }
-
-      //21/1/2023
-      /* var link = document.getElementById("a1");
-
-      var replyByDepartmenId = this.replyByDepartmenId;
-      var sends_id = this.sends_id;
-      var mailid = this.mailId;
-      var keyid = this.keyid;
-
-      var timeout;
-      window.addEventListener("blur", function (e) {
-        window.clearTimeout(timeout);
-      });
-
-      timeout = window.setTimeout(function () {
-        window.location = "http://mail/scanner_app/Setup1.msi";
-      }, 1000);
-
-      link.href = "SScaner:flag=1" + "mId=" + mailid + "keyid=" + keyid;*/
-      //end 21/1/2023
-    },
 
     remove_to_array_of_side_measure(consignee, name) {
       if (this.mail_Number) {
@@ -3786,12 +3634,7 @@ console.log("code inbox_form="+event.code);
       this.loading = true;
 
       if (this.isperent == "false" && this.resended_from != 0) {
-        console.log(
-          "1111111111111111111111111111111111111111",
-          this.isperent,
-          "2222222222",
-          this.resended_from,
-        );
+       
 
         this.$http.documentService
           .GetAllDocN(
@@ -3817,12 +3660,7 @@ console.log("code inbox_form="+event.code);
             console.log(err);
           });
       } else {
-        console.log(
-          "1111111111111111111111111111111111111111",
-          this.isperent,
-          "2222222222",
-          this.resended_from,
-        );
+     
 
         this.$http.documentService
           .GetAllDocN(this.mailId, this.doc_number, Number(this.department_id2))
@@ -3862,12 +3700,7 @@ console.log("code inbox_form="+event.code);
       this.loading = true;
 
       if (this.resended_from != 0) {
-        console.log(
-          "1111111111111111111111111111111111111111",
-          this.isperent,
-          "2222222222",
-          this.resended_from,
-        );
+    
 
         this.$http.documentService
           .GetAllDocN_sec(
@@ -3893,12 +3726,7 @@ console.log("code inbox_form="+event.code);
             console.log(err);
           });
       } else {
-        console.log(
-          "1111111111111111111111111111111111111111",
-          this.isperent,
-          "2222222222",
-          this.resended_from,
-        );
+    
 
         this.$http.documentService
           .GetAllDocN(this.mailId, this.doc_number, Number(this.department_id2))
@@ -3922,149 +3750,6 @@ console.log("code inbox_form="+event.code);
       }
     },
 
-    //*******************
-    /* reply1() {
-      if (this.conn == null) {
-        console.log("conn=" + this.conn);
-        this.conn = new WebSocket("ws://localhost:58316/ws");
-        //  this.conn = new WebSocket("ws://mail:82/ws");
-
-        this.conn.onclose = (event) => {
-          console.log("close code_inbox_form=" + event.code);
-        };
-        this.conn.onmessage = (event) => {
-          console.log("inbox_form onmessage");
-          let scannedImage = event.data;
-          let mgs = JSON.parse(scannedImage);
-          this.imagesscantest = mgs;
-          var ind = this.imagesscantest.index;
-          console.log("inbox_form index=" + ind);
-          if (ind == 1) {
-            this.keyid = this.imagesscantest.keyid;
-            console.log("inbox keyid=" + this.keyid);
-            console.log(
-              "count websocket_inbox_form=" + this.imagesscantest.count1
-            );
-          } else {
-            console.log("inbox_form.vue else");
-            //this.imagesToSend=[]
-            for (var i = 0; i < mgs["image"].length; i++) {
-              //**********13/12/2024
-            
-             // this.indexOfimagesToShow++;
-             // this.imagesToSend.push({
-              //  baseAs64: mgs["image"][i],
-              //  index: this.indexOfimagesToShow,
-              //  department_id:Number(this.my_department_id),
-             // });
-
-               this.imagesToSend.push({
-                baseAs64: mgs.image[i].img,
-                index: mgs.image[i].num_img,
-                 department_id:Number(this.my_department_id),
-              });
-              //***********end 13/12/2024
-
-            }
-          }
-        };
-      } else if (this.conn.readyState === 3 || this.conn.readyState === 2) {
-        console.log("readystate=" + this.conn.readyState);
-        this.conn = null;
-        this.reply1();
-      } else {
-        var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
-        var mailId = this.mailId;
-        var sends_id = this.sends_id;
-        var department_Id = this.department_Id;
-        var keyid = this.keyid;
-
-        var timeout;
-        window.addEventListener("blur", function (e) {
-          window.clearTimeout(timeout);
-        });
-
-        timeout = window.setTimeout(function () {
-          window.location = "http://mail/scanner_app/Setup1.msi";
-        }, 1000);
-
-        console.log("replay" + "  id= " + mailId_to_get_mail_by_id);
-        document.location =
-          "SScaner:flag=0" +
-          "userId=" +
-          localStorage.getItem("AY_LW") +
-          "mId=" +
-          mailId +
-          "send_ToId=" +
-          sends_id +
-          "to=" +
-          department_Id +
-          "keyid=" +
-          keyid;
-
-        console.log(
-          "testreplay " +
-            "  id= " +
-            mailId +
-            "userId=" +
-            localStorage.getItem("AY_LW") +
-            "send_ToId=" +
-            sends_id +
-            "to=" +
-            department_Id +
-            "keyid=" +
-            keyid
-        );
-      }*/
-
-    //***********21/1/2023
-    /* var link = document.getElementById("a5");
-      var mailId_to_get_mail_by_id = this.mailId_to_get_mail_by_id;
-      var mailId = this.mailId;
-      var sends_id = this.sends_id;
-      var department_Id = this.department_Id;
-      var keyid = this.keyid;
-
-      var timeout;
-      window.addEventListener("blur", function (e) {
-        window.clearTimeout(timeout);
-      });
-
-      timeout = window.setTimeout(function () {
-        window.location = "http://mail/scanner_app/Setup1.msi";
-      }, 1000);
-
-      console.log("replay" + "  id= " + mailId_to_get_mail_by_id);
-      link.href =
-        "SScaner:flag=0" +
-        "userId=" +
-        localStorage.getItem("AY_LW") +
-        "mId=" +
-        mailId +
-        "send_ToId=" +
-        sends_id +
-        "to=" +
-        department_Id +
-        "keyid=" +
-        keyid;
-
-      console.log(
-        "testreplay " +
-          "  id= " +
-          mailId +
-          "userId=" +
-          localStorage.getItem("AY_LW") +
-          "send_ToId=" +
-          sends_id +
-          "to=" +
-          department_Id +
-          "keyid=" +
-          keyid
-      );*/
-    //*************21/1/2023
-    // },
-    //**************************************
-
     print_image() {
       this.image_to_print_n_model = true;
 
@@ -4076,7 +3761,7 @@ console.log("code inbox_form="+event.code);
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+        
             this.loading = false;
             this.screenFreeze = false;
           }, 500);
@@ -4101,7 +3786,7 @@ console.log("code inbox_form="+event.code);
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+          
             this.loading = false;
             this.screenFreeze = false;
           }, 500);
@@ -4127,7 +3812,7 @@ console.log("code inbox_form="+event.code);
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+          
             this.loading = false;
             this.screenFreeze = false;
           }, 500);
@@ -4158,7 +3843,7 @@ console.log("code inbox_form="+event.code);
         )
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+           
 
             this.show_images_images_model = [];
             this.indextotest = 0;
@@ -4200,33 +3885,7 @@ console.log("code inbox_form="+event.code);
       }
     },
 
-    // GetAllDocuments(id, plase) {
-    //   this.from_reply_or_general = plase;
-    //   this.screenFreeze = true;
-    //   this.loading = true;
-    //   this.$http.mailService
-    //     .GetAllDocuments(id, Number(localStorage.getItem("AY_LW")))
-    //     .then((res) => {
-    //       this.show_images_images_model = res.data;
 
-    //       this.testimage_images_model = this.show_images_images_model[0].path;
-
-    //       setTimeout(() => {
-    //         this.show_images_model = true;
-    //         this.screenFreeze = false;
-    //         this.loading = false;
-    //       }, 300);
-    //     })
-    //     .catch((err) => {
-    //       this.loading = false;
-    //       this.there_are_no_documents = true;
-    //       setTimeout(() => {
-    //         this.screenFreeze = false;
-    //         this.there_are_no_documents = false;
-    //         console.log(err);
-    //       }, 700);
-    //     });
-    // },
 
     previousImage() {
       if (this.indextotest > 0) {
@@ -4269,7 +3928,7 @@ console.log("code inbox_form="+event.code);
         mesg.toLowerCase().indexOf("user cancel") >= 0
       ) {
         // User cancelled.
-        console.info("User cancelled");
+      
         return;
       }
 
@@ -4335,7 +3994,7 @@ console.log("code inbox_form="+event.code);
         .NewAddReply(ReplyViewModel)
         .then((res) => {
           setTimeout(() => {
-            console.log(res);
+            
             // this.documentSection = true;
             // this.proceduresSection = true;
 
@@ -4362,7 +4021,7 @@ console.log("code inbox_form="+event.code);
 
       this.screenFreeze = true;
       this.loading = true;
-      console.log("lenght1111=" + this.imagesToSend.length);
+     
       var ReplyViewModel = {
         userId: Number(localStorage.getItem("AY_LW")),
         mailId: Number(this.mailId),
@@ -4384,11 +4043,8 @@ console.log("code inbox_form="+event.code);
         .NewAddReply(ReplyViewModel)
         .then((res) => {
           setTimeout(() => {
-            console.log("res=" + res.data.replyid);
-            // this.imagesToSend = [];
-            // this.documentSection = true;
-            // this.proceduresSection = true;
-
+        
+        
             this.loading = false;
             this.screenFreeze = false;
 
@@ -4396,7 +4052,7 @@ console.log("code inbox_form="+event.code);
             //28/2/2023 this.getMailById();
             var cou = Math.ceil(this.imagesToSend.length / 50);
             if (cou > 1) {
-              console.log("cou=" + cou);
+        
               var id_of_reply_from_beackend = res.data.replyid; //101
               this.update_reply_to_complet_sent_img(
                 1,
@@ -4425,7 +4081,7 @@ console.log("code inbox_form="+event.code);
       const token = await ensureAccessToken();
       if (!token) return;
 
-      console.log("update_reply ii=" + ii);
+
 
       if (ii < count1) {
         var a1 = a2;
@@ -4451,11 +4107,7 @@ console.log("code inbox_form="+event.code);
           .update_replay(ReplyViewModel)
           .then((res) => {
             setTimeout(() => {
-              console.log(res);
-              //28/3/2023  this.imagesToSend = [];
-              // this.documentSection = true;
-              // this.proceduresSection = true;
-
+             
               this.loading = false;
               this.screenFreeze = false;
 

@@ -47,7 +47,7 @@ export default {
 
   ReplyReaded(mail_id, my_department_Id, dep_id, userId, type, sends_id) {
     return api.put(
-      `/api/ExternalMails/ReplyReaded?mail_id=${mail_id}&my_department_Id=${my_department_Id}&dep_id=${dep_id}&userId=${userId}&type=${type}&SendToId=${sends_id}`,{}
+      `/api/external/messages/ReplyReaded?mail_id=${mail_id}&my_department_Id=${my_department_Id}&dep_id=${dep_id}&userId=${userId}&type=${type}&SendToId=${sends_id}`,{}
     );
   },
 
@@ -262,7 +262,7 @@ export default {
 
   read_it_mail(id, department_id, userId) {
     return api.put(
-      `/api/ExternalMails/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`,{}
+      `/api/external/messages/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`,{}
     );
     //   return api.put(`http://mail:82/api/ExternalMails/read_it_mail?mail_id=${id}&department_Id=${department_id}&userId=${userId}`);
   },

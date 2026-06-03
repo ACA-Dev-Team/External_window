@@ -11,7 +11,7 @@
             alt="logo"
           />
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            منظومة البريد الداخلي
+            منظومة البريد الخارجي
           </h2>
         </div>
         <div v-on:keyup.enter="submit" class="mt-8 space-y-6">
@@ -345,42 +345,15 @@ export default {
 
     this.GetAllDepartments();
 
-    //**********8/1/2023 stop websocket
-    //*********************websocket 13/12/2022
-
-    /* this.conn = new WebSocket("ws://localhost:58316/ws");
-     // this.conn = new WebSocket("ws://mail:82/ws");
-   
-
-     this.conn.onmessage = (event) => {
-      let data_mac = event.data;
-      let mgs = JSON.parse(data_mac);
-      this.macaddress = mgs;
-      var ind = this.macaddress.index;
-
-      if (ind == 1) {
-        this.keyid = this.macaddress.keyid;
-         console.log("keyidttttt="+this.macaddress.keyid);  
-      } 
-      else
-       {
-        console.log("mac address="+this.macaddress.mac); 
-        console.log("keyid="+this.macaddress.keyid);  
-      }
-     }*/
-    //*************End 13/12/2022
-    //*******end stop websocket 8/1/2023
   },
 
   watch: {
     departmentIdSelected: function () {
       this.GetBranchOfDepartment();
-      //this.GetUsersOfDepartment() ;
+    
     },
 
-    // branchIdSelected: function () {
-    //   this.GetUsersOfBranchDepartment();
-    // },
+  
   },
 
   data() {
@@ -438,7 +411,7 @@ export default {
       link1.href = "MMac:flag=2" + "keyid=" + keyid;
     },
     test1() {
-      console.log("maaaac address");
+     
       var link1 = document.getElementById("a9");
 
       var keyid = this.keyid;
@@ -448,7 +421,7 @@ export default {
 
     //***********End 13/12/2022
     GetBranchOfDepartment() {
-      // console.log(this.departmentIdSelected)
+     
       this.loading = true;
       this.screenFreeze = true;
 
@@ -476,7 +449,7 @@ export default {
     },
 
     GetUsersOfBranchDepartment() {
-      // console.log(this.departmentIdSelected)
+     
       this.loading = true;
       this.screenFreeze = true;
 
@@ -523,7 +496,7 @@ export default {
       this.$http.mailService
         .AllDepartments()
         .then((res) => {
-          console.log(res);
+      
           this.loading = false;
           this.screenFreeze = false;
           this.departments = res.data;
@@ -542,7 +515,7 @@ export default {
     },
 
     totest() {
-      console.log("IN");
+    
       this.$router.push({ name: "dashboard" });
     },
 
@@ -582,7 +555,7 @@ export default {
             // this.screenFreeze = false;
 
             this.loginSuccess = true;
-            console.log(res.data);
+           
 
             this.user = res.data.user;
 

@@ -81,7 +81,7 @@
             >
               هيئة الرقابة الإدارية
               <div class="my-4" style="margin-top: 16px; margin-bottom: 16px">
-                منظومة البريد الداخلي
+                منظومة البريد الخارجي
               </div>
 
               <div
