@@ -341,6 +341,8 @@ export default {
     if (localStorage.getItem("p_v") != "v1") {
       localStorage.setItem("p_v", "v1");
       location.reload(true);
+
+      localStorage.setItem(`tour_completed_${this.tourKey}`, 'false');
     }
 
     this.GetAllDepartments();
@@ -563,6 +565,9 @@ export default {
             this.$authenticatedUser.name = this.user.administrator.userName;
             this.$authenticatedUser.departmentId =
               this.user.administrator.departmentId;
+
+
+            localStorage.setItem("dep_name_ex", this.user.administrator.department_name);
 
             localStorage.setItem("AY_LW", this.user.administrator.userId);
             localStorage.setItem("user_name", this.user.administrator.userName);

@@ -8,7 +8,8 @@
 
 <script>
 
-
+import 'intro.js/introjs.css';
+import '@/assets/tour-theme.css';
 export default {
 
   data() {

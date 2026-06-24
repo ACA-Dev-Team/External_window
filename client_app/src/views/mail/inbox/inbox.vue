@@ -1,7 +1,9 @@
 <template>
   <div class="">
-    <div class="h-screen bg-gray-100 overflow-hidden flex">
-      <asideComponent :isOpen="menuOpen"></asideComponent>
+      
+    <div data-tour=" ( هنا صفحة البريد الوارد لك من هيئة الرقابة الإدارية يمكنك (الاطلاع على البريد - تأكيد قراءة البريد - الرد على البريد" class="h-screen bg-gray-100 overflow-hidden flex">
+      <asideComponent :isOpen="menuOpen" :showTour="false"></asideComponent>
+      <ProfessionalTour tourKey="inbox_tour" :showTour="true"  />
       <div class="flex-1 bg-gray-200 w-0 overflow-y-auto">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
           <navComponent @menu-toggled="onMenuToggle"></navComponent>
@@ -13,7 +15,7 @@
                 </h1>
               </div>
 
-              <div class="flex items-center mt-4">
+              <div data-tour=" هنا يمكنك فلترة البريد حسب الفترة الزمنية  من  و إلى" class="flex items-center mt-4">
                 <span class="text-base font-medium text-gray-800">
                   التاريخ :
                 </span>
@@ -49,7 +51,7 @@
             </div>
 
             <div class="mt-4 flex">
-              <div
+              <div data-tour="عند تعليم هذا الصندوق سيتم فلترة البريد وإظهار البريد الذي يوجد به رد جديد من هيئة الرقابة الإدارية ولم يتم قراءة هذا الرد"
                 class="flex sm:col-span-2 border border-green-400 px-2 rounded-md ml-2"
               >
                 <label
@@ -66,8 +68,10 @@
                 />
               </div>
 
-              <div class="relative w-full">
+              <div data-tour="   هنا يمكنك فلترة البريد بالبحث برقم البريد أو جزء من ملخص البريد أو السنة التي أرسل فيها البريد "  class="relative w-full">
                 <button
+                
+                id="btn_filter"
                   @click="filter = !filter"
                   :class="filter ? 'shadow-md' : ''"
                   class="rounded-t-md border border-b-0 hover:text-blue-600 hover:font-bold group w-full p-2 bg-white flex items-center justify-between focus:outline-none"
@@ -107,13 +111,13 @@
                 </button>
 
                 <div
-                  v-if="filter"
+                  v-show="filter"
                   class="rounded-b-md shadow-md absolute top-10 w-full border border-t-0 z-40 bg-white px-4 py-8"
                 >
                   <div
                     class="flex flex-col md:grid md:gap-y-6 md:gap-x-4 md:grid-cols-6 max-w-4xl mx-auto"
                   >
-                    <div class="md:col-span-2">
+                    <div data-tour="يجب ادخال رقم البريد والظغط على زر البحث  للبحث على بريد معين حسب الرقم"  class="md:col-span-2">
                       <label
                         for="mail_id"
                         class="block text-base font-semibold text-gray-800"
@@ -121,6 +125,7 @@
                         رقم البريد
                       </label>
                       <input
+                       
                         v-model="mail_id"
                         type="number"
                         min="1"
@@ -130,7 +135,7 @@
                       />
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div data-tour="  يجب ادخال جزء من ملخص الموضوع  والظغط على زر البحث  للبحث على بريد معين حسب الملخص  " class="md:col-span-2">
                       <label
                         for="summary"
                         class="block text-base font-semibold text-gray-800"
@@ -164,8 +169,9 @@
                     </div> -->
 
                   
-                    <div class="flex">
+                    <div data-tour="عند اختيار سنة والظغط على زر البحث سيتم عرض البريد الذي تم استقباله في السنة التي تم اختيارها" class="flex">
                       <div>
+                        
                         <label
                           class="block text-base font-semibold text-gray-800 mt-2"
                         >
@@ -173,7 +179,7 @@
                         </label>
 
                         <select
-                          id="small"
+                          id="year"
                           class="block p-2 w-28 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           v-model="year_filter"
                         >
@@ -290,13 +296,13 @@
    
             </div>
 
-            <div
+            <div  
               class="w-full mt-4 rounded-md flex flex-col lg:flex-row items-start divide-y-2 divide-gray-200"
             >
               <div class="w-full lg:w-8/12 ml-2">
                 البريد
 
-                <div
+                <div data-tour="في هذا القسم يظهر البريد الوارد اليك من الهيئة بمعلومات ملخصة"
                   class="flex items-center bg-gray-100 w-full text-xs pl-2 py-1 mt-2"
                 >
                   <div class="w-8/12 flex items-center">
@@ -339,7 +345,8 @@
 
                      
                     </button>
-                    <div class="w-4/12 md:1/12 flex p-2  text-center">
+
+                    <div  class="w-4/12 md:1/12 flex p-2  text-center">
                       <div
                         v-if="
                           (mail.resendfrom == 0 && isperent != 'true') ||
@@ -347,7 +354,7 @@
                         "
                         class="w-1/3 flex justify-center items-center px-2"
                       >
-                        <router-link
+                        <router-link data-tour="هذا الزر ينقلك الى صفحة اخرى تظهر لك تفاصيل هذا البريد وتعرض جميع المعلومات بمكان واحد بما في ذلك المستندات إن وجدت"
                           title="عرض التفاصيل"
                           :to="{
                             name: 'inbox-show',
@@ -402,7 +409,7 @@
                       </div>
 
                       <div
-                        v-else
+                        v-else data-tour="هذا الزر ينقلك الى صفحة اخرى تظهر لك تفاصيل هذا البريد وتعرض جميع المعلومات بمكان واحد بما في ذلك المستندات إن وجدت"
                         class="w-1/3 flex justify-center items-center px-2"
                       >
                         <router-link
@@ -459,7 +466,7 @@
                         </router-link>
                       </div>
 
-                      <div
+                      <div data-tour="هذا الزر يتيح لك عرض جميع المستندات التي تخص هذا البريد بما في ذلك المستندات التي تم ارسالها واستلامها من الردود"
                         v-if="mail.resendfrom == 0"
                         class="w-1/3 flex justify-center items-center"
                       >
@@ -505,7 +512,7 @@
                         </button>
                       </div>
 
-                      <div
+                      <div data-tour="هذا الزر يتيح لك عرض جميع المستندات التي تخص هذا البريد بما في ذلك المستندات التي تم ارسالها واستلامها من الردود"
                         v-else
                         class="w-1/3 flex justify-center items-center"
                       >
@@ -551,7 +558,7 @@
                         </button>
                       </div>
 
-                      <div class=" flex justify-center items-center">
+                      <div data-tour=" لتأكيد استلام البريد اضغط على هذا الزر وسيتم اعلام الجهة المرسلة بإستلام البريد" class=" flex justify-center items-center">
                         <!-- v-if="roles.includes('g')" -->
                         <button
                           :class="mail.flag != 2 ? 'hidden' : ''"
@@ -635,8 +642,8 @@
                 </div>
               </div>
 
-              <div class="w-full lg:w-7/12 mr-2 mt-2">
-                الجهات المرسل إليها والوارد منها
+              <div data-tour=" في هذا الجزء تعرض معلومات عن حالة البريد الحالية وعند الظغط على هذا السطر ستظهر لك نافذة الردود الخاصة بهذا البريد ومنها يمكنك ارسال واستلام الردود والتسديدات الخاصة بالبريد " class="w-full lg:w-7/12 mr-2 mt-2">
+                
                 <span v-if="show_senders_mail">
                   - رقم البريد
                   <span class="font-bold">{{ show_senders_mail }}</span>
@@ -704,7 +711,8 @@
                       </div>
 
                       <div
-                        v-if="
+                        v-show="
+                        read_tour||
                           ((sender.sends_from == my_department_id &&
                             sender.reply_readed) ||
                             (sender.sends_from != my_department_id &&
@@ -714,6 +722,9 @@
                         class="w-1/12 py-1 flex"
                       >
                         <button
+
+                        
+                        data-tour="هذا الزر يقوم بتأكيد قراءة الرد حتى لا يظهر البريد مرة اخرى عند الفلترة بزر الردود الجديدة " 
                           @click="
                             ReplyReaded(
                               sender.department_id,
@@ -757,99 +768,16 @@
                   </div>
                 </div>
 
-                <div v-if="realated_departments.length > 0" class="mt-2 flex">
-                  <div class="sm:col-span-4 w-10/12">
-                    <label
-                      tabindex="5"
-                      for="department"
-                      class="block text-sm font-semibold text-gray-800"
-                    >
-                      الإدارات المشتركة
-                    </label>
-
-                    <div class="relative">
-                      <button
-                        @click="
-                          realated_departmentselect = !realated_departmentselect
-                        "
-                        id="realated_department"
-                        class="overflow-hidden text-right block mt-2 w-full rounded-md h-10 border text-xs bg-white border-green-400 hover:shadow-sm focus:outline-none focus:border-green-400 p-2"
-                      >
-                        {{ realated_departmentNameSelected }}
-                      </button>
-
-                      <div
-                        v-if="realated_departmentselect"
-                        class="border text-sm bg-white border-green-400 p-2 absolute w-full z-20 shadow h-40 overflow-y-scroll rounded-b-md"
-                      >
-                        <button
-                          class="block focus:outline-none w-full my-1 text-right"
-                          @click="
-                            select_realated_department(
-                              realated_department.id,
-                              realated_department.departmentName,
-                              index,
-                            );
-                            realated_departmentselect =
-                              !realated_departmentselect;
-                          "
-                          v-for="(
-                            realated_department, index
-                          ) in realated_departments"
-                          :key="realated_department.id"
-                        >
-                          {{ realated_department.departmentName }}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="sm:col-span-1 flex justify-center w-2/12"
-                    v-if="realated_departmentNameSelected"
-                  >
-                    <button
-                      @click="ResharedMailWithAnotherDep()"
-                      class="mt-8 rounded-md text-green-400 duration-200 hover:text-green-500 text-base font-semibold w-8 h-8"
-                    >
-                      <svg
-                        class="fill-current w-full h-full"
-                        version="1.1"
-                        id="Capa_1"
-                        x="0px"
-                        y="0px"
-                        viewBox="0 0 512 512"
-                        style="enable-background: new 0 0 512 512"
-                        xml:space="preserve"
-                      >
-                        <g>
-                          <g>
-                            <path
-                              d="M256,0C114.833,0,0,114.833,0,256s114.833,256,256,256s256-114.853,256-256S397.167,0,256,0z M256,472.341
-                                                            c-119.275,0-216.341-97.046-216.341-216.341S136.725,39.659,256,39.659S472.341,136.705,472.341,256S375.295,472.341,256,472.341z
-                                                            "
-                            />
-                          </g>
-                        </g>
-                        <g>
-                          <g>
-                            <path
-                              d="M355.148,234.386H275.83v-79.318c0-10.946-8.864-19.83-19.83-19.83s-19.83,8.884-19.83,19.83v79.318h-79.318
-                                                            c-10.966,0-19.83,8.884-19.83,19.83s8.864,19.83,19.83,19.83h79.318v79.318c0,10.946,8.864,19.83,19.83,19.83
-                                                            s19.83-8.884,19.83-19.83v-79.318h79.318c10.966,0,19.83-8.884,19.83-19.83S366.114,234.386,355.148,234.386z"
-                            />
-                          </g>
-                        </g>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+              
               </div>
 
             </div>
 
             <section
-              v-if="
+
+              data-tour ="  وبين هذه المساحة مخصصة لإرسال واستقبال الردود الخاصة بالبريد بحيث يمكنك إرسال و إستقبال الردود والمستندات بينك وبين الهيئة " 
+              v-show="
+              tour==true||
                 (resend_for_done == 0 &&
                   departmentName &&
                   roles.includes('sr')) ||
@@ -868,6 +796,7 @@
               </p>
 
               <div
+              
                 id="scroll"
                 class="h-72 overflow-y-scroll mt-4 rounded-lg py-2 border border-gray-300"
               >
@@ -1155,9 +1084,10 @@
                 <div class="w-7/12 sm:flex sm:justify-between">
                   <div
                     class="w-5/12 mt-2"
-                    v-if="!isdone && !isdonetext && !isdone2"
+                    v-show="!isdone && !isdonetext && !isdone2"
                   >
                     <textarea
+                    data-tour="هنا يمكنك كتابة رد والتسديد على البريد وبعدها ستظهر أزرار إرفاق المستندات وإرسال الرد" 
                       id=""
                       class="block w-full h-20 text-sm rounded-md border border-gray-200 hover:shadow-sm focus:outline-none focus:border-gray-300 p-2"
                       v-model="reply_to_add"
@@ -1168,12 +1098,13 @@
                   </div>
 
                   <div
-                    v-if="reply_to_add != '' && !isdone2"
+                    v-show="(reply_to_add != '' && !isdone2)|| tour"
                     class="sm:w-6/12 sm:mr-2 sm:flex mt-2"
                   >
                     <div class="sm:mr-4" >
                       <!-- زر اختيار الملفات -->
                       <label
+                      data-tour="بالضغط على هذا الزر يمكنك رفع المستندات سواء كانت صورة أو pdf لارسالها في رد على البريد الذي تم اختياره" 
                         for="fileInput"
                         class="inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded cursor-pointer hover:bg-gray-300"
                       >
@@ -1254,11 +1185,12 @@
 
                   <div class="sm:w-3/12 sm:mr-2 sm:ml-2 mt-2">
                     <button
-                      v-if="reply_to_add != '' && !isdone2"
+                    data-tour="بعد كتابة الرد وارفاق المستندات إن وجدت يتم الضغط على هذا الزر لارسال الرد الى الهيئة  " 
+                      v-show="(reply_to_add != '' && !isdone2)  ||tour"
                       @click="AddReply()"
                       class="flex items-center justify-center h-20 w-28 py-2 bg-white rounded-lg text-blue-600 tracking-wide border border-blue-600 cursor-pointer hover:text-white hover:bg-blue-600 focus:outline-none duration-300"
                     >
-                      <span class="leading-normal">إرسال</span>
+                      <span  data-tour="الى هنا انتهت صفحة الوارد" class="leading-normal">إرسال</span>
                       <svg
                         class="w-4 h-4 mr-2"
                         viewBox="0 0 341 341"
@@ -1629,7 +1561,7 @@
               <button
                 v-if="
                   isPdfFile(testimage) &&
-                  roles.includes('kkk') &&
+                  
                   measure_id_for_photo != 1
                 "
                 @click="printPdf(testimage)"
@@ -1639,7 +1571,7 @@
               </button>
 
               <button
-                v-else-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-else-if=" measure_id_for_photo != 1"
                 @click="print_image()"
                 v-print="'#print_one_dec'"
                 class="bg-blue-500 ml-16 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
@@ -1648,7 +1580,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-if=" measure_id_for_photo != 1"
                 @click="MergeAndDownload(p_id, p_uid, p_did, p_mydep)"
                 v-print="'#printMe'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
@@ -1996,6 +1928,9 @@ import navComponent from "@/components/navComponent.vue";
 import svgLoadingComponent from "@/components/svgLoadingComponent.vue";
 import { ensureAccessToken } from "@/services/tokenHelper";
 import Swal from "sweetalert2";
+import ProfessionalTour from '@/components/ProfessionalTour.vue';
+import 'intro.js/introjs.css';        // CSS الافتراضي
+import '@/assets/tour-theme.css';
 //import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export default {
@@ -2039,12 +1974,7 @@ export default {
 
     await this.GetInboxs();
 
-    // this.GetAllmail_cases();
-    // this.GetAllClassifications();
-    // this.GetAllDepartments();
-    // this.GetAllMembers();
-    // this.GetAllSides();
-    // this.GetAllMeasures();
+
   },
 
   computed: {
@@ -2139,35 +2069,7 @@ export default {
       this.GetInboxs();
     },
 
-    // done_mails: function () {
-    //   if (this.done_mails == true) {
-    //     this.not_done = false;
-    //   }
 
-    //   this.GetInboxs(), (this.filter = false);
-    // },
-
-    // not_done: function () {
-    //   if (this.not_done == true) {
-    //     this.done_mails = false;
-    //   }
-
-    //   this.GetInboxs(), (this.filter = false);
-    // },
-
-    // isdone: function () {
-
-    //   if (!isdone){
-
-    //       isdonetext=true;
-    //   }
-    //   isdonetext=false;
-    // },
-    //****
-    // year_filter: function() {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
     mailType: function () {
       this.page_num = 1;
       this.GetInboxs();
@@ -2191,65 +2093,13 @@ export default {
       this.GetInboxs();
     },
 
-    // date_from: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // date_to: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-
-    // mail_id: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-
-    // general_incoming_number: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-
-    // summary: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // departmentIdSelected: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // sideIdSelected: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // measureIdSelected: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // classificationIdSelected: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-
-    // mail_caseIdSelected: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-    // by_date_of_reply: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
-
-    // s_number: function () {
-    //   this.page_num = 1;
-    //   this.GetInboxs();
-    // },
   },
 
   components: {
     asideComponent,
     navComponent,
     svgLoadingComponent,
+    ProfessionalTour
   },
 
   data() {
@@ -2488,8 +2338,12 @@ export default {
       user_department: localStorage.getItem("chrome"),
 
       signture_images: [],
+      tour:false,
+      read_tour:false
     };
   },
+
+    
 
   beforeDestroy() {
     // أو beforeUnmount في Vue 3

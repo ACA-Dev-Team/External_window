@@ -1,8 +1,9 @@
 <template>
   <div class="">
+    
     <div class="h-screen bg-gray-100 overflow-hidden flex">
-      <asideComponent :isOpen="menuOpen"></asideComponent>
-
+      <asideComponent :isOpen="menuOpen" ></asideComponent>
+     <ProfessionalTour tourKey="sent_form_tour" :showTour="true" />
       <div class="flex-1 bg-gray-200 w-0 overflow-y-auto">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
           <navComponent @menu-toggled="onMenuToggle"></navComponent>
@@ -21,6 +22,7 @@
 
               <section class="col-span-2">
                 <div
+                data-tour="هنا هنا سيظهر رقم البريد تلقائيا بعد عملية حفظ البريد "
                   class="float-left text-sm font-semibold text-gray-800 flex items-center"
                 >
                   رقم الرسالة
@@ -67,7 +69,7 @@
                   <section
                     class="lg:w-6/12 w-full grid grid-cols-1 gap-4 bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-inner"
                   >
-                    <div class="">
+                    <div data-tour="هنا يجب كتابة ملخص الموضوع المراد إرساله إلى هيئة الرقابة الإدارية" class="">
                       <label
                         for="summary"
                         class="block text-[11px] uppercase tracking-wider font-bold text-gray-500"
@@ -83,7 +85,7 @@
                       ></textarea>
                     </div>
 
-                    <div class="">
+                    <div data-tour=" هنا حقل التاريخ الذي سيكون تلقائيا مربوط بالتاريخ الحالي لإدخال الرسالة الرسالة" class="">
                       <label
                         for="date"
                         class="block text-[11px] uppercase tracking-wider font-bold text-gray-500"
@@ -98,7 +100,7 @@
                       />
                     </div>
 
-                            <div class="">
+                            <div data-tour=" في هذا الحقل يجب إدخال الرقم الإشاري الممنوح للمراسلة  الخاصة بالجهةالجهة  ليتيح لكم لاحقا تعدد البحث بحيث يمكنكم البحث بالرقم الاشاري الممنوح من المنظومة أو الرقم الإشاري الممنوح من قبلكم" class="">
                     <label
                       for="entity_reference_number"
                       class="block text-[11px] uppercase tracking-wider font-bold text-gray-500"
@@ -120,6 +122,7 @@
                     class="lg:w-6/12 w-full bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-inner flex flex-col"
                   >
                     <div
+                    data-tour="هنا يمكنك كتابة الغرض من ارسال هذه الرسالة بصورة مختصرة"
                       v-if="my_department_id != 79"
                       class="w-full h-full flex flex-col space-y-2"
                     >
@@ -140,6 +143,7 @@
                 </section>
                 <section
                   v-if="documentSection"
+                  data-tour="هنا يمكنك إضافة المستندات عن طريقة ميزة رفع الصور أو الملفات (PDF) علما بأن ظهور زر الرفع مرتبط بحفظ البريد"
                   class="w-full col-span-4 lg:col-span-2 bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-inner"
                 >
                   <div class="flex w-full justify-between items-center">
@@ -1118,7 +1122,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && isPdfFile(image_of_doc)"
+                v-if=" isPdfFile(image_of_doc)"
                 @click="printPdf(image_of_doc)"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -1323,7 +1327,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && isPdfFile(reply_image_of_doc)"
+                v-if=" isPdfFile(reply_image_of_doc)"
                 @click="printPdf(reply_image_of_doc)"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -1778,6 +1782,7 @@ import asideComponent from "@/components/asideComponent.vue";
 import navComponent from "@/components/navComponent.vue";
 import svgLoadingComponent from "@/components/svgLoadingComponent.vue";
 import { ensureAccessToken } from "@/services/tokenHelper";
+import ProfessionalTour from '@/components/ProfessionalTour.vue';
 
 export default {
   created() {},
@@ -1787,6 +1792,7 @@ export default {
     asideComponent,
     navComponent,
     svgLoadingComponent,
+    ProfessionalTour
   },
 
   beforeDestroy() {

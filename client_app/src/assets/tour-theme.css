@@ -1,0 +1,99 @@
+/* tour-theme.css */
+/* 1. ضبط التظليل ليكون خلف العنصر فقط */
+.introjs-overlay {
+  background: rgba(0, 0, 0, 0.6) !important; /* درجة الظلام */
+  opacity: 1 !important;
+}
+
+/* 2. جعل العنصر المستهدف يظهر فوق التظليل وبألوانه الأصلية */
+.introjs-helperLayer {
+  background: transparent !important; /* نجعل خلفية الطبقة المساعدة شفافة */
+  box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.6) !important; /* نستخدم الظل لإنشاء التظليل بدلاً من الطبقة */
+  border-radius: 8px !important; /* لجعل الزوايا متناسبة مع تصميمك */
+}
+
+/* 3. التأكد من أن العنصر نفسه لا يتأثر بأي شفافية */
+.introjs-showElement {
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 9999999 !important;
+  background-color: transparent !important;
+}
+
+/* 4. إزالة أي تأثيرات داكنة إضافية قد يضعها intro.js على العنصر */
+.introjs-relativePosition {
+  position: relative !important;
+}
+/* نمط الطبقة الشفافة المعتمة (Overlay) */
+.introjs-overlay {
+  background-color: rgba(0, 0, 0, 0.7); /* تعتيم أقوى للتركيز */
+  opacity: 1 !important;
+}
+.introjs-helperLayer {
+  background: transparent !important; /* يجعل الخلفية شفافة حول العنصر */
+  box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.6) !important; /* تظليل الشاشة المحيطة فقط */
+}
+
+/* نمط بالونة التلميح (Tooltip) */
+.introjs-tooltip {
+  direction: rtl; /* دعم اللغة العربية */
+  border-radius: 16px !important; /* زوايا منحنية عصرية */
+  padding: 20px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  font-family: inherit; /* استخدام نفس خط المنظومة */
+}
+
+/* نمط عنوان التلميح */
+.introjs-tooltip-title {
+  font-weight: 800 !important;
+  color: #1f2937; /* Gray-800 */
+  font-size: 1.1rem !important;
+}
+
+/* نمط نص التلميح */
+.introjs-tooltip-text {
+  color: #4b5563; /* Gray-600 */
+  margin-top: 8px !important;
+}
+
+/* نمط الأزرار (التالي/السابق) */
+.introjs-button {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s;
+  text-shadow: none !important;
+}
+
+/* زر التالي - مطابق للون منظومتك */
+.introjs-nextbutton {
+  background-color: #2563eb !important; /* Blue-600 */
+  color: white !important;
+  border: none !important;
+}
+
+.introjs-nextbutton:hover {
+  background-color: #1d4ed8 !important; /* Blue-700 */
+}
+
+/* زر السابق والتخطي */
+.introjs-prevbutton,
+.introjs-skipbutton {
+  background-color: transparent !important;
+  color: #9ca3af !important; /* Gray-400 */
+  border: none !important;
+}
+
+.introjs-prevbutton:hover,
+.introjs-skipbutton:hover {
+  color: #1f2937 !important; /* Gray-800 */
+}
+
+/* نمط نقاط التقدم */
+.introjs-bullets ul li a {
+  background: #e5e7eb !important; /* Gray-200 */
+}
+
+.introjs-bullets ul li a.active {
+  background: #2563eb !important; /* Blue-600 */
+}

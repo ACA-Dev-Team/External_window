@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="h-screen bg-gray-100 overflow-hidden flex">
-      <asideComponent :isOpen="menuOpen"></asideComponent>
+      <asideComponent :isOpen="menuOpen" :showTour="false"></asideComponent>
       <div class="flex-1 bg-gray-200 w-0 overflow-y-auto">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
           <navComponent @menu-toggled="onMenuToggle"></navComponent>

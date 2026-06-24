@@ -1,43 +1,45 @@
 <template>
   <div class="">
     <div class="h-screen bg-slate-50 overflow-hidden flex font-sans dir-rtl">
-      <asideComponent :isOpen="menuOpen"></asideComponent>
       
+      
+      <asideComponent_with_tour :isOpen="menuOpen" :showTour="true"></asideComponent_with_tour>
+
+      <ProfessionalTour tourKey="dashboard_tour" :showTour="true" />
       <div class="flex-1 w-0 overflow-y-auto scroll-smooth">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
-          <navComponent @menu-toggled="onMenuToggle"></navComponent>
-          
+          <navComponent_with_tour @menu-toggled="onMenuToggle"></navComponent_with_tour>
+
           <main class="flex-1 relative focus:outline-none pt-6 pb-12 px-4 sm:px-0">
-            <!-- العنوان -->
-            <div class="mb-10 text-center animate-fade-in-down">
+            <div 
+              class="mb-10 text-center animate-fade-in-down" 
+              data-tour="مرحباً بك في لوحة تحكم إحصائيات المعاملات الخاصة بقسمك"
+            >
               <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-700 to-gray-900 drop-shadow-sm">
                 إحصائيات بريد ( {{ dep_name }} )
               </h1>
-   
             </div>
 
-            <!-- حاوية الإحصائيات -->
-            <section class="grid grid-cols-1 gap-10  mt-28">
+            <section class="grid grid-cols-1 gap-10 mt-28">
               
-              <!-- قسم الصادر -->
               <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex items-center gap-3 mb-8 border-b border-slate-100 pb-4">
                   <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                   </div>
                   <h2 class="text-2xl font-bold text-slate-800">البريد الصادر</h2>
                 </div>
                 
                 <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <!-- بطاقة مجموع الصادر -->
-                  <div class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-blue-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default">
+                  <div 
+                    data-tour="إجمالي عدد المعاملات التي قمت بإرسالها من هذا القسم"
+                    class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-blue-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default"
+                  >
                     <div class="absolute -left-6 -top-6 w-32 h-32 bg-blue-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700 ease-in-out"></div>
                     <div class="relative z-10 flex justify-between items-center">
                       <div>
                         <p class="text-slate-500 text-sm font-semibold mb-2">مجموع البريد الصادر</p>
-                        <p class="font-black text-blue-600 text-4xl tracking-tight">
-                          {{ total_sent }}
-                        </p>
+                        <p class="font-black text-blue-600 text-4xl tracking-tight">{{ total_sent }}</p>
                       </div>
                       <div class="text-blue-200 group-hover:text-blue-500 transition-colors duration-300">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -45,15 +47,15 @@
                     </div>
                   </div>
 
-                  <!-- بطاقة صادر لم يقرأ -->
-                  <div class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-red-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default">
+                  <div 
+                    data-tour="المعاملات الصادرة التي لم يتم فتحها من قبل الجهة المستقبلة"
+                    class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-red-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default"
+                  >
                     <div class="absolute -left-6 -top-6 w-32 h-32 bg-red-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700 ease-in-out"></div>
                     <div class="relative z-10 flex justify-between items-center">
                       <div>
                         <p class="text-slate-500 text-sm font-semibold mb-2">بريد صادر لم يُقرأ</p>
-                        <p class="font-black text-red-500 text-4xl tracking-tight">
-                          {{ total_sent_not_reded }}
-                        </p>
+                        <p class="font-black text-red-500 text-4xl tracking-tight">{{ total_sent_not_reded }}</p>
                       </div>
                       <div class="text-red-200 group-hover:text-red-500 transition-colors duration-300 flex-shrink-0">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -63,25 +65,24 @@
                 </section>
               </div>
 
-              <!-- قسم الوارد -->
               <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="flex items-center gap-3 mb-8 border-b border-slate-100 pb-4">
                   <div class="p-3 bg-green-50 text-green-600 rounded-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                   </div>
                   <h2 class="text-2xl font-bold text-slate-800">البريد الوارد</h2>
                 </div>
                 
                 <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <!-- بطاقة مجموع الوارد -->
-                  <div class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-green-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default">
+                  <div 
+                    data-tour="إجمالي المعاملات التي وصلت إلى قسمكم"
+                    class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-green-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default"
+                  >
                     <div class="absolute -left-6 -top-6 w-32 h-32 bg-green-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700 ease-in-out"></div>
                     <div class="relative z-10 flex justify-between items-center">
                       <div>
                         <p class="text-slate-500 text-sm font-semibold mb-2">مجموع البريد الوارد</p>
-                        <p class="font-black text-green-600 text-4xl tracking-tight">
-                          {{ total_inbox }}
-                        </p>
+                        <p class="font-black text-green-600 text-4xl tracking-tight">{{ total_inbox }}</p>
                       </div>
                       <div class="text-green-200 group-hover:text-green-500 transition-colors duration-300">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
@@ -89,15 +90,15 @@
                     </div>
                   </div>
 
-                  <!-- بطاقة وارد لم يقرأ -->
-                  <div class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-yellow-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default">
+                  <div 
+                    data-tour="معاملات واردة جديدة بانتظار فتحها والاطلاع عليها"
+                    class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-r-4 border-r-yellow-500 hover:shadow-xl transition-all duration-500 ease-out transform hover:-translate-y-2 group cursor-default"
+                  >
                     <div class="absolute -left-6 -top-6 w-32 h-32 bg-yellow-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700 ease-in-out"></div>
                     <div class="relative z-10 flex justify-between items-center">
                       <div>
                         <p class="text-slate-500 text-sm font-semibold mb-2">بريد وارد لم يُقرأ</p>
-                        <p class="font-black text-yellow-600 text-4xl tracking-tight">
-                          {{ total_inbox_not_reded }}
-                        </p>
+                        <p class="font-black text-yellow-600 text-4xl tracking-tight">{{ total_inbox_not_reded }}</p>
                       </div>
                       <div class="text-yellow-200 group-hover:text-yellow-500 transition-colors duration-300 flex-shrink-0">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
@@ -112,23 +113,15 @@
         </div>
       </div>
     </div>
-
-    <!-- شاشة التحميل (بقت كما هي مع تحسين بسيط في المظهر) -->
-    <div
-      v-if="screenFreeze"
-      class="w-screen h-screen bg-slate-900 bg-opacity-40 backdrop-blur-sm absolute inset-0 z-50 flex justify-center items-center transition-opacity duration-300"
-    >
-      <div v-if="loading" class="bg-white p-6 rounded-2xl shadow-2xl">
-        <svgLoadingComponent></svgLoadingComponent>
-      </div>
-    </div>
   </div>
 </template>
+
 <script>
-import asideComponent from "@/components/asideComponent.vue";
-import navComponent from "@/components/navComponent.vue";
-import svgLoadingComponent from "@/components/svgLoadingComponent.vue";
+import asideComponent_with_tour from "@/components/asideComponent_with_tour.vue";
+import navComponent_with_tour from "@/components/navComponent_with_tour.vue";
+
 import { ensureAccessToken } from "@/services/tokenHelper";
+import ProfessionalTour from '@/components/ProfessionalTour.vue';
 
 export default {
   mounted() {
@@ -150,7 +143,11 @@ export default {
 
     this.generateYears();
 
-    this.dep_name = sessionStorage.getItem("dep_name2");
+   // this.dep_name = sessionStorage.getItem("dep_name2");
+
+
+    this.dep_name = localStorage.getItem("dep_name_ex");
+    
 
     this.roles = localStorage.getItem("Az07");
 
@@ -178,13 +175,47 @@ export default {
   },
 
   components: {
-    asideComponent,
-    navComponent,
-    svgLoadingComponent,
+    asideComponent_with_tour,
+    navComponent_with_tour,
+   
+    ProfessionalTour
   },
 
   data() {
     return {
+
+      onboardingSteps: [
+        {
+          title: 'مرحباً بك!',
+          intro: 'دعنا نأخذك في جولة سريعة لشرح واجهة إدارة المستخدمين.',
+          position: 'center' // التلميح الأول يظهر في المنتصف
+        },
+        {
+          element: '#step1',
+          title: 'عنوان الصفحة',
+          intro: 'من هنا يمكنك معرفة القسم الذي تتواجد فيه حالياً.',
+          position: 'bottom' // التلميح يظهر تحت العنصر
+        },
+        {
+          element: '#step2',
+          title: 'إضافة مستخدم',
+          intro: 'اضغط هنا لفتح نموذج إضافة مستخدم جديد للنظام.',
+          position: 'left'
+        },
+        {
+          element: '#step3',
+          title: 'جدول البيانات',
+          intro: 'هنا تعرض كافة بيانات المستخدمين الحاليين مع خيارات التعديل والحذف.',
+          position: 'top'
+        },
+        {
+          element: '#step4',
+          title: 'نظرة سريعة',
+          intro: 'هذا القسم يظهر إحصائيات سريعة ومفيدة عن المستخدمين.',
+          position: 'right'
+        }
+      ],
+
       availableYears: [],
       // 2. الخيار المختار افتراضياً (جميع الأوقات)
       selectedPeriod: "all",

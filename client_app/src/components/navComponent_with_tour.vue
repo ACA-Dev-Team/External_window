@@ -126,7 +126,7 @@
       </a> -->
 
       <router-link
-  
+      data-tour="اضغط على هذا الزر لإضافة بريد جديد"
         v-if="roles.includes('bbb')&&ismember!='true'"
         :to="{ name: 'sent-add' }"
         class="border border-black duration-300 bg-white px-4 py-2 rounded-md text-gray-900 font-bold hover:bg-green-600 hover:text-white focus:outline-none"
@@ -203,7 +203,7 @@
         <div>
           <!--  @click="userProcedure = !userProcedure" -->
           <button
-        
+          data-tour="اضغط على هذا الزر لتسجيل الخروج من المنظومة"
             type="button"
             class="
               max-w-xs

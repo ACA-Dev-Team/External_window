@@ -1,11 +1,12 @@
 <template>
   <div class="">
+    <ProfessionalTour tourKey="inbox_form_tour" :showTour="true"  />
     <div class="h-screen bg-gray-100 overflow-hidden flex">
-      <asideComponent :isOpen="menuOpen"></asideComponent>
+      <asideComponent :isOpen="menuOpen" :showTour="false"></asideComponent>
       <div class="flex-1 bg-gray-200 w-0 overflow-y-auto pb-20">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:px-8">
           <navComponent @menu-toggled="onMenuToggle"></navComponent>
-          <main class="flex-1 relative focus:outline-none pt-2 pb-6">
+          <main class="flex-1 relative focus:outline-none pt-2 pb-6" data-tour="هنا صفحة تفاصيل البريد الوار بحيث يتم عرض جميع المعلومات بالإضافة الى المستندات إن وجدت">
             <div
               class="flex flex-col mt-4 md:mt md:flex-row justify-between items-center"
             >
@@ -18,7 +19,7 @@
 
           
               <div
-                class="float-left mt-4 md:mt-0 text-base font-semibold text-gray-800"
+                class="float-left mt-4 md:mt-0 text-base font-semibold text-gray-800" data-tour="هنا يظهر الرقم الإشاري للبريد البريد "
               >
                 رقم الرسالة
                 <span class="mr-4 underline font-bold text-2xl">
@@ -37,7 +38,7 @@
                   <section
                     class="md:w-10/12 md:mr-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 bg-gray-100 rounded-md p-6"
                   >
-                    <div class="sm:col-span-6">
+                    <div data-tour=" هنا يظهر ملخص الموضوع الذي تم صياغته من قبل الهيئة" class="sm:col-span-6">
                       <label
                         for="summary"
                         class="block text-base font-semibold text-gray-800"
@@ -52,7 +53,7 @@
                       </div>
                     </div>
 
-                    <div class="sm:col-span-6">
+                    <div data-tour="هنا يظهر الإجراء المطلوب من طرفكم" class="sm:col-span-6">
                       <label
                         for="action_required"
                         class="block text-base font-semibold text-gray-800"
@@ -66,7 +67,7 @@
                       </div>
                     </div>
 
-                        <div class="sm:col-span-6">
+                        <div data-tour="هنا يظهر تاريخ الرسالة" class="sm:col-span-6">
                       <label
                         for="date"
                         class="block text-base font-semibold text-gray-800"
@@ -83,7 +84,7 @@
                   </section>
                 </section>
 
-                <section
+                <section data-tour="هنا تظهر المستندات إن وجدت"
                   class="lg:col-span-2 w-full bg-gray-100 rounded-md p-4 "
                 >
                   <div class="flex justify-between items-center">
@@ -128,7 +129,7 @@
                     <div class="mt-4 pt-4 pb-4 rounded-md relative">
                       <!-- لو المستخدم ما عنده الصلاحية -->
                       <div
-                        v-if="!roles.includes('sss')"
+                       
                         class="cursor-not-allowed w-full h-full bg-gray-900 bg-opacity-90 absolute z-20 inset-0"
                       ></div>
 
@@ -329,7 +330,7 @@
 
            
           
-              <section
+              <!-- <section
                 v-if="
                   signture_images.length > 0 &&
                   (roles.includes('signature') ||
@@ -344,10 +345,10 @@
                 </div>
 
                 <div class="h-72 w-full bg-gray-100 rounded-md mt-4 mb-10">
-                  <!--  v-if="imagesToSend != '' || imagesToShow != ''" -->
+               
 
                   <div class="mt-4 pt-4 pb-4 rounded-md relative">
-                    <!-- لو المستخدم ما عنده الصلاحية -->
+                  
                     <div
                       v-if="!roles.includes('sss')"
                       class="cursor-not-allowed w-full h-full bg-gray-900 bg-opacity-90 absolute z-20 inset-0"
@@ -355,7 +356,7 @@
 
                     <div>
                       <div class="relative h-64 w-full">
-                        <!-- الصورة -->
+                        
 
                         <img
                           :src="signture_images[0].path"
@@ -363,7 +364,7 @@
                           class="w-full h-full rounded object-contain"
                         />
 
-                        <!-- وسم مائي -->
+                    
                         <div
                           class="absolute w-24 z-10 pointer-events-none flex justify-center items-center"
                           style="
@@ -410,7 +411,7 @@
                         </div>
                       </div>
 
-                      <!-- التنقل بين المستندات -->
+                      
                       <div
                         class="flex justify-center justify-self-center items-center pt-2 mt-2"
                       >
@@ -423,7 +424,7 @@
                     </div>
                   </div>
                 </div>
-              </section>
+              </section> -->
 
            
              
@@ -598,7 +599,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && isPdfFile(image_of_doc)"
+                v-if=" isPdfFile(image_of_doc)"
                 @click="printPdf(image_of_doc)"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -606,7 +607,7 @@
               </button>
 
               <button
-                v-else-if="roles.includes('kkk')"
+                v-else
                 @click="print_image()"
                 v-print="'#print_one_dec'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
@@ -615,7 +616,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk')"
+             
                 @click="MergeAndDownload(p_id, p_uid, p_did, p_mydep)"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -866,7 +867,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk')"
+                
                 @click="print_image_sig()"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -1038,7 +1039,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-if=" measure_id_for_photo != 1"
                 @click="print_image2()"
                 v-print="'#print_one_dec2'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
@@ -1047,7 +1048,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-if=" measure_id_for_photo != 1"
                 @click="print_image2()"
                 v-print="'#printMe2'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
@@ -1226,7 +1227,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-if=" measure_id_for_photo != 1"
                 @click="print_image()"
                 v-print="'#printMe'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg"
@@ -1344,7 +1345,7 @@
               </button>
 
               <button
-                v-if="roles.includes('kkk') && measure_id_for_photo != 1"
+                v-if=" measure_id_for_photo != 1"
                 v-print="'#print_reply_doc_n'"
                 class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-white"
               >
@@ -1516,6 +1517,9 @@ import asideComponent from "@/components/asideComponent.vue";
 import navComponent from "@/components/navComponent.vue";
 import svgLoadingComponent from "@/components/svgLoadingComponent.vue";
 import { ensureAccessToken } from "@/services/tokenHelper";
+import ProfessionalTour from '@/components/ProfessionalTour.vue';
+import 'intro.js/introjs.css';        // CSS الافتراضي
+import '@/assets/tour-theme.css';
 
 //import { HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -1665,6 +1669,7 @@ export default {
     asideComponent,
     navComponent,
     svgLoadingComponent,
+     ProfessionalTour
   },
 
   data() {

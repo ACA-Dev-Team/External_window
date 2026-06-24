@@ -224,7 +224,7 @@ export default {
             localStorage.setItem("refresh_token", res.data.refreshToken);
 
             localStorage.setItem("dep_type", res.data.find.officeOrdirectorate);
-
+            localStorage.setItem("dep_name_ex", this.user.department_name);
             
              localStorage.setItem("section_id", res.data.find.section_id);
              localStorage.setItem("section_parent", res.data.find.section_parent);

@@ -28,6 +28,15 @@
                 <label class="block text-gray-700">كلمة السر الجديدة</label>
                 <input type="password" v-model="newPassword" class="w-full mt-1 p-2 border border-gray-300 rounded"
                     required />
+
+                    <div class="mt-2 text-xs space-y-1">
+        <p :class="passwordCriteria.length ? 'text-green-600' : 'text-gray-400'">✓ 8 خانات على الأقل</p>
+        <p :class="passwordCriteria.upper ? 'text-green-600' : 'text-gray-400'">✓ حرف كبير (A-Z)</p>
+        <p :class="passwordCriteria.lower ? 'text-green-600' : 'text-gray-400'">✓ حرف صغير (a-z)</p>
+        <p :class="passwordCriteria.number ? 'text-green-600' : 'text-gray-400'">✓ رقم واحد على الأقل</p>
+        <p :class="passwordCriteria.special ? 'text-green-600' : 'text-gray-400'">✓ رمز خاص (@$!%*?&)</p>
+    </div>
+
             </div>
 
             <!-- تأكيد كلمة السر الجديدة -->
@@ -101,7 +110,15 @@ export default {
                loading: false,
             screenFreeze: false,
 
-            menuOpen:true
+            menuOpen:true,
+
+            passwordCriteria: {
+            length: false,
+            upper: false,
+            lower: false,
+            number: false,
+            special: false
+        }
 
         };
     },
@@ -117,17 +134,64 @@ export default {
       this.menuOpen = value; // 🔹 نستقبل القيمة هنا
     },
         
+    // validatePassword() {
+    //     const p = this.newPassword;
+    //     this.passwordCriteria = {
+    //         length: p.length >= 8,
+    //         upper: /[A-Z]/.test(p),
+    //         lower: /[a-z]/.test(p),
+    //         number: /[0-9]/.test(p),
+    //         special: /[@$!%*?&]/.test(p)
+    //     };
+    // },
+validatePassword() {
+    const p = this.newPassword || "";
+    
+    // شروط التحقق بدون Regex
+    let hasUpper = false;
+    let hasLower = false;
+    let hasNumber = false;
+    let hasSpecial = false;
+
+    for (let i = 0; i < p.length; i++) {
+        const char = p[i];
+        if (char >= 'A' && char <= 'Z') hasUpper = true;
+        else if (char >= 'a' && char <= 'z') hasLower = true;
+        else if (char >= '0' && char <= '9') hasNumber = true;
+        else hasSpecial = true; // أي شيء آخر نعتبره رمزاً خاصاً
+    }
+
+    this.passwordCriteria = {
+        length: p.length >= 8,
+        upper: hasUpper,
+        lower: hasLower,
+        number: hasNumber,
+        special: hasSpecial
+    };
+    
+    console.log("Current Criteria Values:", JSON.stringify(this.passwordCriteria));
+},
         async handleChangePassword() {
 
 
-            this.errorMessage = "";
-            this.successMessage = "";
+this.errorMessage = "";
+    this.successMessage = "";
 
-            if (this.newPassword !== this.confirmPassword) {
-                this.errorMessage = "كلمة السر الجديدة وتأكيدها غير متطابقين.";
-                return;
-            }
+    // 1. إعادة التأكد من الشروط قبل أي شيء
+    this.validatePassword(); 
+    
+    // 2. التحقق من القوة
+    const isStrong = Object.values(this.passwordCriteria).every(val => val === true);
+    if (!isStrong) {
+        this.errorMessage = "كلمة السر لا تستوفي معايير القوة (يجب أن تحتوي على حروف كبيرة، صغيرة، أرقام، ورموز).";
+        return;
+    }
 
+    // 3. التحقق من التطابق
+    if (this.newPassword !== this.confirmPassword) {
+        this.errorMessage = "كلمة السر الجديدة وتأكيدها غير متطابقين.";
+        return;
+    }
 
 
                 var passnewuserpass = {

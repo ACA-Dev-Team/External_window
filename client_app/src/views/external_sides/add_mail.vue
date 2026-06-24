@@ -213,7 +213,7 @@
 
                     <div class="w-1/2 flex justify-end">
                       <button
-                        v-if="roles.includes('6') && image_of_doc"
+                        v-if=" image_of_doc"
                         @click="prepare_delete_all_documents()"
                         class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-lg text-white"
                       >
@@ -229,7 +229,7 @@
                     <!--  v-if="imagesToSend != '' || imagesToShow != ''" -->
                     <div class="mt-2 pt-2 pb-4 rounded-md relative">
                       <div
-                        v-if="!roles.includes('ggg')"
+                        
                         class="cursor-not-allowed w-full h-full bg-gray-900 bg-opacity-90 absolute z-20 inset-0"
                       ></div>
                       <div class="">
@@ -363,7 +363,7 @@
                               </button>
 
                               <button
-                                v-if="roles.includes('6')"
+                               
                                 type="button"
                                 class="bg-red-600 hover:bg-red-500 duration-500 p-2 rounded-full focus:outline-none ml-2"
                                 @click="prepare_delete_document()"

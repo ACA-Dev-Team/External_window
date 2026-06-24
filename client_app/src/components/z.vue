@@ -9,9 +9,9 @@
         <div class="flex-grow mt-5 flex flex-col">
           <nav class="flex-1 bg-gray-50 flex flex-col justify-between">
             <div class="px-2 space-y-1">
-              
+              <ProfessionalTour tourKey="aside_tour"  />
               <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-              <router-link v-if="ismember!='true'" title="لوحة التحكم" :to="{ name: 'dashboard' }"
+              <router-link data-tour="هنا يمكنك العودة إلى لوحة التحكم الرئيسية" v-if="ismember!='true'" title="لوحة التحكم" :to="{ name: 'dashboard' }"
                 class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group rounded-md py-2 px-2 flex items-center justify-center text-sm font-medium">
                 <svg class="text-green-400 group-hover:text-green-500 h-6 w-6  " fill="none" stroke="currentColor"
                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -24,7 +24,7 @@
                 </span>
               </router-link>
 
-              <router-link  v-if="roles.includes('nnn')&&ismember!='true'" title="البريد الوارد" :to="{ name: 'inbox' }"
+              <router-link data-tour="هذا الزر يتيح لك الانتقال الى صفحة البريد الوارد الخاص بك" v-if="roles.includes('nnn')&&ismember!='true'" title="البريد الوارد" :to="{ name: 'inbox' }"
                 class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group rounded-md py-2 px-2 flex items-center justify-center text-sm font-medium">
                 <svg class="text-red-500 group-hover:text-red-600 h-6 w-6 " fill="none" stroke="currentColor"
                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -55,7 +55,7 @@
 
 
 
-              <router-link  v-if="roles.includes('aaa')&&ismember!='true'" title="البريد الصادر" :to="{ name: 'sent' }"
+              <router-link data-tour="هذا الزر يتيح لك الانتقال الى صفحة البريد الصادر الخاص بك" v-if="roles.includes('aaa')&&ismember!='true'" title="البريد الصادر" :to="{ name: 'sent' }"
                 class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group rounded-md py-2 px-2 flex items-center justify-center text-sm font-medium">
                 <svg class="text-blue-400 group-hover:text-blue-500  h-6 w-6 fill-current stroke-current " fill="none"
                   stroke="currentColor" version="1.1" width="256" height="256" viewBox="0 0 256 256"
@@ -80,7 +80,7 @@
 
            
 
-              <router-link  v-if="ismember!='true'" title=" دليل الالوان " :to="{ name: 'guidecolor' }" class="
+              <router-link data-tour="صفحة دليل الالوان توضح لك رمزية كل لون مرتبط بالبريد" v-if="ismember!='true'" title=" دليل الالوان " :to="{ name: 'guidecolor' }" class="
                   text-gray-600
                   hover:bg-gray-50 hover:text-gray-900
                   group
@@ -108,7 +108,7 @@
 
 
 
-                     <router-link  title=" تغيير كلمة السر" :to="{ name: 'change_pass' }" class="
+                     <router-link data-tour="من هنا يمكنك تغيير كلمة السر الخاصة بحسابك " title=" تغيير كلمة السر" :to="{ name: 'change_pass' }" class="
                   text-gray-600
                   hover:bg-gray-50 hover:text-gray-900
                   group
@@ -161,8 +161,9 @@
 </template>
 
 <script>
-
-
+import ProfessionalTour from '@/components/ProfessionalTour.vue';
+import 'intro.js/introjs.css';        // CSS الافتراضي
+import '@/assets/tour-theme.css';
 export default {
 
        
@@ -171,13 +172,13 @@ export default {
   
   components: {
    
-    
+    ProfessionalTour
   },
 
   props:{
 
       
- 
+  showTour: { type: Boolean, default: false },
     isOpen:Boolean
   },
 
